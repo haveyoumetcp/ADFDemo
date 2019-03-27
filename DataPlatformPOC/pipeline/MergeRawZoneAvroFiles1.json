@@ -1,0 +1,86 @@
+{
+	"name": "MergeRawZoneAvroFiles1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Data1",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "AzureDataLakeStoreSource",
+						"recursive": true
+					},
+					"sink": {
+						"type": "AzureDataLakeStoreSink",
+						"copyBehavior": "MergeFiles"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "ADLS_Gen1_avro1",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "raw/avidpaytransaction/avidpaytransaction_trn/tpaymentdetail/2019/201903",
+							"FileName": " "
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADLS_Gen1_avro1",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "raw/avidpaytransaction/avidpaytransaction_trn/tpaymentdetail/2019",
+							"FileName": "tpayment_201903.avro"
+						}
+					}
+				]
+			},
+			{
+				"name": "Delete1",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Copy Data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ADLS_Gen1_avro_no_filename1",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "raw/avidpaytransaction/avidpaytransaction_trn/tpaymentdetail/2019/201903"
+						}
+					},
+					"recursive": true,
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "ADLS_Gen1",
+							"type": "LinkedServiceReference"
+						},
+						"path": "raw/deleted/avidpaytransaction/avidpaytransaction_static/tpaymentmethod/2019"
+					},
+					"enableLogging": true
+				}
+			}
+		]
+	}
+}
