@@ -1,0 +1,494 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "AvidX-Sandbox-cpollock"
+		},
+		"ADLS_Gen2_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ADLS_Gen2'"
+		},
+		"ETLConfigDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ETLConfigDB'"
+		},
+		"HiveMetadata_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'HiveMetadata'"
+		},
+		"Hive_avidxhdinsightcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdinsightcpollocksandbox'"
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox2'"
+		},
+		"ODS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ODS'"
+		},
+		"ODS1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ODS1'"
+		},
+		"SalesforceOrg1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'SalesforceOrg1'"
+		},
+		"SalesforceOrg1_securityToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'securityToken' of 'SalesforceOrg1'"
+		},
+		"avidxhdinsightcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'avidxhdinsightcpollocksandbox'"
+		},
+		"avidxhdisparkcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox'"
+		},
+		"avidxhdisparkcpollocksandbox2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox2'"
+		},
+		"avidxsacpollockhdinsight_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
+		},
+		"AvidPayTransaction_AzureSQLDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AvidPayTransaction_AzureSQLDB'"
+		},
+		"ADLS_Gen1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"ADLS_Gen1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_avro_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().FileName"
+		},
+		"ADLS_Gen1_avro_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_avro1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().FileName"
+		},
+		"ADLS_Gen1_avro1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_avro_no_filename_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_avro_no_filename1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_csv_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"ADLS_Gen1_csv_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_orc_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@replace(dataset().FileName,' ','')"
+		},
+		"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen2_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen2_avro_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@toLower(replace(dataset().FileName,' ',''))"
+		},
+		"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@toLower(dataset().Directory)"
+		},
+		"ADLS_Gen2_orc_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@replace(dataset().FileName,' ','')"
+		},
+		"ADLS_Gen2_orc_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ExternalTableScript_DS_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().path"
+		},
+		"ExternalTableScript_DS_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "hiveexternaltablescripts"
+		},
+		"HiveSnapshotViewScripts_DS_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().Path"
+		},
+		"HiveSnapshotViewScripts_DS_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Blob"
+		},
+		"SnapshotScript_DS_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().path"
+		},
+		"SnapshotScript_DS_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "hivesnapshotscripts"
+		},
+		"tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "tbatchexportstatus.avro"
+		},
+		"tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "raw/ods/integrations_static/tbatchexportstatus"
+		},
+		"tbatchexportstatusAVRO_gen2_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "tbatchexportstatus02222019.avro"
+		},
+		"tbatchexportstatusAVRO_gen2_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "rawzone/integrations/static/tbatchexportstatus/avro"
+		},
+		"ADLS_Gen1_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://avidxdlsdvtsedw01.azuredatalakestore.net/webhdfs/v1"
+		},
+		"ADLS_Gen1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "55d96f5e-2b75-4762-ae08-11de584d8e83"
+		},
+		"ADLS_Gen1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "fb7f642a-16cf-48a7-8161-58002441290d"
+		},
+		"ADLS_Gen1_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "AvidX-Dv-TsResources-Edw-Poc-RG"
+		},
+		"ADLS_Gen2_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://avidsadlv2cpollock.dfs.core.windows.net"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
+			"type": "string",
+			"defaultValue": "https://avidxdlssandboxcpollock.azuredatalakestore.net/webhdfs/v1"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "55d96f5e-2b75-4762-ae08-11de584d8e83"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_subscriptionId": {
+			"type": "string",
+			"defaultValue": "fd22907b-bfdf-4826-ae7e-656e01208380"
+		},
+		"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
+			"type": "string",
+			"defaultValue": "cpollock-rg"
+		},
+		"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"SalesforceOrg1_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "mdpintegrations@avidxchange.com.qasit"
+		},
+		"avidxhdinsightcpollocksandbox_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas Token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"ADLS_Gen2_accountKey": {
+						"value": "[parameters('ADLS_Gen2_accountKey')]"
+					},
+					"ETLConfigDB_connectionString": {
+						"value": "[parameters('ETLConfigDB_connectionString')]"
+					},
+					"HiveMetadata_connectionString": {
+						"value": "[parameters('HiveMetadata_connectionString')]"
+					},
+					"Hive_avidxhdinsightcpollocksandbox_password": {
+						"value": "[parameters('Hive_avidxhdinsightcpollocksandbox_password')]"
+					},
+					"Hive_avidxhdisparkcpollocksandbox2_password": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_password')]"
+					},
+					"ODS_connectionString": {
+						"value": "[parameters('ODS_connectionString')]"
+					},
+					"ODS1_connectionString": {
+						"value": "[parameters('ODS1_connectionString')]"
+					},
+					"SalesforceOrg1_password": {
+						"value": "[parameters('SalesforceOrg1_password')]"
+					},
+					"SalesforceOrg1_securityToken": {
+						"value": "[parameters('SalesforceOrg1_securityToken')]"
+					},
+					"avidxsacpollockhdinsight_connectionString": {
+						"value": "[parameters('avidxsacpollockhdinsight_connectionString')]"
+					},
+					"AvidPayTransaction_AzureSQLDB_connectionString": {
+						"value": "[parameters('AvidPayTransaction_AzureSQLDB_connectionString')]"
+					},
+					"ADLS_Gen1_properties_typeProperties_dataLakeStoreUri": {
+						"value": "[parameters('ADLS_Gen1_properties_typeProperties_dataLakeStoreUri')]"
+					},
+					"ADLS_Gen1_properties_typeProperties_tenant": {
+						"value": "[parameters('ADLS_Gen1_properties_typeProperties_tenant')]"
+					},
+					"ADLS_Gen1_properties_typeProperties_subscriptionId": {
+						"value": "[parameters('ADLS_Gen1_properties_typeProperties_subscriptionId')]"
+					},
+					"ADLS_Gen1_properties_typeProperties_resourceGroupName": {
+						"value": "[parameters('ADLS_Gen1_properties_typeProperties_resourceGroupName')]"
+					},
+					"ADLS_Gen2_properties_typeProperties_url": {
+						"value": "[parameters('ADLS_Gen2_properties_typeProperties_url')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_tenant": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_tenant')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_subscriptionId": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_subscriptionId')]"
+					},
+					"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
+						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_resourceGroupName')]"
+					},
+					"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
+						"value": "[parameters('Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username')]"
+					},
+					"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username')]"
+					},
+					"SalesforceOrg1_properties_typeProperties_username": {
+						"value": "[parameters('SalesforceOrg1_properties_typeProperties_username')]"
+					},
+					"ADLS_Gen1_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen1_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen1_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen1_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen1_avro_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen1_avro_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen1_avro_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen1_avro_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen1_avro1_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen1_avro1_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen1_avro1_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen1_avro1_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen1_avro_no_filename_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen1_avro_no_filename_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen1_avro_no_filename1_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen1_avro_no_filename1_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen1_csv_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen1_csv_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen1_csv_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen1_csv_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen1_orc_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen2_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"avidxhdinsightcpollocksandbox_password": {
+						"value": "[parameters('avidxhdinsightcpollocksandbox_password')]"
+					},
+					"avidxhdisparkcpollocksandbox_password": {
+						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
+					},
+					"avidxhdisparkcpollocksandbox2_password": {
+						"value": "[parameters('avidxhdisparkcpollocksandbox2_password')]"
+					},
+					"ADLS_Gen2_avro_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen2_orc_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen2_orc_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_folderPath')]"
+					},
+					"ExternalTableScript_DS_properties_typeProperties_fileName": {
+						"value": "[parameters('ExternalTableScript_DS_properties_typeProperties_fileName')]"
+					},
+					"ExternalTableScript_DS_properties_typeProperties_folderPath": {
+						"value": "[parameters('ExternalTableScript_DS_properties_typeProperties_folderPath')]"
+					},
+					"HiveSnapshotViewScripts_DS_properties_typeProperties_fileName": {
+						"value": "[parameters('HiveSnapshotViewScripts_DS_properties_typeProperties_fileName')]"
+					},
+					"HiveSnapshotViewScripts_DS_properties_typeProperties_folderPath": {
+						"value": "[parameters('HiveSnapshotViewScripts_DS_properties_typeProperties_folderPath')]"
+					},
+					"SnapshotScript_DS_properties_typeProperties_fileName": {
+						"value": "[parameters('SnapshotScript_DS_properties_typeProperties_fileName')]"
+					},
+					"SnapshotScript_DS_properties_typeProperties_folderPath": {
+						"value": "[parameters('SnapshotScript_DS_properties_typeProperties_folderPath')]"
+					},
+					"tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_fileName": {
+						"value": "[parameters('tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_fileName')]"
+					},
+					"tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_folderPath": {
+						"value": "[parameters('tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_folderPath')]"
+					},
+					"tbatchexportstatusAVRO_gen2_properties_typeProperties_fileName": {
+						"value": "[parameters('tbatchexportstatusAVRO_gen2_properties_typeProperties_fileName')]"
+					},
+					"tbatchexportstatusAVRO_gen2_properties_typeProperties_folderPath": {
+						"value": "[parameters('tbatchexportstatusAVRO_gen2_properties_typeProperties_folderPath')]"
+					},
+					"avidxhdinsightcpollocksandbox_properties_typeProperties_userName": {
+						"value": "[parameters('avidxhdinsightcpollocksandbox_properties_typeProperties_userName')]"
+					},
+					"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
+						"value": "[parameters('avidxhdisparkcpollocksandbox_properties_typeProperties_userName')]"
+					},
+					"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
+						"value": "[parameters('avidxhdisparkcpollocksandbox2_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_2')]"
+			]
+		}
+	]
+}
