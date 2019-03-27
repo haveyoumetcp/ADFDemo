@@ -1,0 +1,50 @@
+{
+	"name": "Copy_ADLS_Gen2_orc_to_ADLS_Gen2_avro",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Data",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "AzureBlobFSSource",
+						"recursive": true
+					},
+					"sink": {
+						"type": "AzureBlobFSSink"
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 0
+				},
+				"inputs": [
+					{
+						"referenceName": "ADLS_Gen2_orc",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "rawzone",
+							"FileName": " "
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADLS_Gen2_avro",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "rawzone",
+							"FileName": " "
+						}
+					}
+				]
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

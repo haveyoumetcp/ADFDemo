@@ -1,0 +1,32 @@
+{
+	"name": "tbatchexportstatus_azuresqldb_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ODS",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"structure": [
+			{
+				"name": "BatchExportStatusId",
+				"type": "Int32"
+			},
+			{
+				"name": "Name",
+				"type": "String"
+			},
+			{
+				"name": "DisplayName",
+				"type": "String"
+			},
+			{
+				"name": "IsActive",
+				"type": "Boolean"
+			}
+		],
+		"typeProperties": {
+			"tableName": "[integrations_static].[tBatchExportStatus]"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,36 @@
+{
+	"name": "tBatchStatusAVROFile_ADLS_Gen1_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStore1",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureDataLakeStoreFile",
+		"structure": [
+			{
+				"name": "batchexportstatusid",
+				"type": "Int32"
+			},
+			{
+				"name": "name",
+				"type": "String"
+			},
+			{
+				"name": "displayname",
+				"type": "String"
+			},
+			{
+				"name": "isactive",
+				"type": "Boolean"
+			}
+		],
+		"typeProperties": {
+			"format": {
+				"type": "AvroFormat"
+			},
+			"fileName": "tbatchexportstatus.avro",
+			"folderPath": "raw/ods/integrations_static/tbatchexportstatus"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

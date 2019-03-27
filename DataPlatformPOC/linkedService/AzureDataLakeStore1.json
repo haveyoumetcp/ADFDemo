@@ -1,0 +1,13 @@
+{
+	"name": "AzureDataLakeStore1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureDataLakeStore",
+		"typeProperties": {
+			"dataLakeStoreUri": "https://avidxdlssandboxcpollock.azuredatalakestore.net/webhdfs/v1",
+			"tenant": "55d96f5e-2b75-4762-ae08-11de584d8e83",
+			"subscriptionId": "fd22907b-bfdf-4826-ae7e-656e01208380",
+			"resourceGroupName": "cpollock-rg"
+		}
+	}
+}

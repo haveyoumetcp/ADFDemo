@@ -1,0 +1,181 @@
+{
+	"name": "CreateHiveExternalTableScripts_new",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetObjectList",
+				"type": "Lookup",
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 5,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[uspGetMetadataObjectsSQLServer]",
+						"storedProcedureParameters": {
+							"DatabaseName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.DatabaseName",
+									"type": "Expression"
+								}
+							},
+							"IsReturnAllIndividualObjects": {
+								"type": "Boolean",
+								"value": {
+									"value": "@bool(pipeline().parameters.IsCreateInvididualObjectScripts)",
+									"type": "Expression"
+								}
+							},
+							"ObjectName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.ObjectName",
+									"type": "Expression"
+								}
+							},
+							"SchemaName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.SchemaName",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"dataset": {
+						"referenceName": "ETLConfigDB_DS",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FE_GetExternalTableScript",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetObjectList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetObjectList').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 50,
+					"activities": [
+						{
+							"name": "CreateHiveExternalTableScript",
+							"type": "Copy",
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 5,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"typeProperties": {
+								"source": {
+									"type": "SqlSource",
+									"sqlReaderStoredProcedureName": "[dbo].[uspGetHiveExternalTableSchemaSQLServer_new]",
+									"storedProcedureParameters": {
+										"DatabaseName": {
+											"type": "String",
+											"value": {
+												"value": "@item().DatabaseName",
+												"type": "Expression"
+											}
+										},
+										"SchemaName": {
+											"type": "String",
+											"value": {
+												"value": "@item().SchemaName",
+												"type": "Expression"
+											}
+										},
+										"TableName": {
+											"type": "String",
+											"value": {
+												"value": "@item().ObjectName",
+												"type": "Expression"
+											}
+										},
+										"StoredAsType": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.StoredAsType",
+												"type": "Expression"
+											}
+										},
+										"StorageAccountLocation": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.StorageAccountLocation",
+												"type": "Expression"
+											}
+										}
+									}
+								},
+								"sink": {
+									"type": "BlobSink"
+								},
+								"enableStaging": false,
+								"dataIntegrationUnits": 0
+							},
+							"inputs": [
+								{
+									"referenceName": "ETLConfigDB_DS",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ExternalTableScript_DS",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": {
+											"value": "@toLower(CONCAT(item().DatabaseName,if(empty(item().SchemaName),'.hql',CONCAT('/',item().SchemaName,if(empty(item().ObjectName),'.hql',CONCAT('/',item().ObjectName,'.hql'))))))",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"DatabaseName": {
+				"type": "String"
+			},
+			"SchemaName": {
+				"type": "String"
+			},
+			"ObjectName": {
+				"type": "String"
+			},
+			"StorageAccountLocation": {
+				"type": "String",
+				"defaultValue": "abfss://rawzone@avidsadlv2cpollock.dfs.core.windows.net/"
+			},
+			"StoredAsType": {
+				"type": "String",
+				"defaultValue": "ORC"
+			},
+			"IsCreateInvididualObjectScripts": {
+				"type": "Bool",
+				"defaultValue": false
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

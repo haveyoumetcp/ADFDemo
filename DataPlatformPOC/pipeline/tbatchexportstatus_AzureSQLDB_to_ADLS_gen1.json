@@ -1,0 +1,54 @@
+{
+	"name": "tbatchexportstatus_AzureSQLDB_to_ADLS_gen1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Data",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource"
+					},
+					"sink": {
+						"type": "AzureDataLakeStoreSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"columnMappings": {
+							"BatchExportStatusId": "batchexportstatusid",
+							"Name": "name",
+							"DisplayName": "displayname",
+							"IsActive": "isactive"
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "tbatchexportstatus_azuresqldb_DS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "tBatchStatusAVROFile_ADLS_Gen1_DS",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"test_parameter": {
+				"type": "String"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

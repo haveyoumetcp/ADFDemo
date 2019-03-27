@@ -1,0 +1,32 @@
+{
+	"name": "SnapshotScript_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "avidxsacpollockhdinsight",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "String"
+			}
+		},
+		"type": "AzureBlob",
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": "",
+				"rowDelimiter": "",
+				"nullValue": "\\N",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": false
+			},
+			"fileName": {
+				"value": "@dataset().path",
+				"type": "Expression"
+			},
+			"folderPath": "hivesnapshotscripts"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

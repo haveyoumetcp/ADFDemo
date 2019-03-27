@@ -1,0 +1,12 @@
+{
+	"name": "SalesforceOrg1",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "Salesforce",
+		"typeProperties": {
+			"environmentUrl": "https://test.salesforce.com",
+			"username": "mdpintegrations@avidxchange.com.qasit",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFWSURYLVNBTkRCT1gtQ1BPTExPQ0tfN2IxM2YxMjktYmQ2NS00MmM5LWE1ZGMtNzFhZjQ1NjczOWE3Ig0KfQ=="
+		}
+	}
+}

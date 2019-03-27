@@ -1,0 +1,15 @@
+{
+	"name": "ODS_DS_new",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ODS",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": ""
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

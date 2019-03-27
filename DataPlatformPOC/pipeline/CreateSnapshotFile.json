@@ -1,0 +1,71 @@
+{
+	"name": "CreateSnapshotFile",
+	"properties": {
+		"activities": [
+			{
+				"name": "Hive query to ADLS",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "HiveSource",
+						"query": {
+							"value": "SELECT *\nFROM v_@{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}_@{pipeline().parameters.ObjectName}_snapshot;",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "AzureDataLakeStoreSink"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Hive_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"ObjectName": " "
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADLS_Gen1_orc",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": {
+								"value": "rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName}",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@{pipeline().parameters.ObjectName}.orc",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"DatabaseName": {
+				"type": "String",
+				"defaultValue": "avidpaytransaction"
+			},
+			"SchemaName": {
+				"type": "String",
+				"defaultValue": "static"
+			},
+			"ObjectName": {
+				"type": "String",
+				"defaultValue": "tpaymenttype"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

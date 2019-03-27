@@ -1,0 +1,48 @@
+{
+	"name": "Copy_ADLS_Gen2_to_ADLS_Gen2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Data1",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "AzureBlobFSSource",
+						"recursive": true
+					},
+					"sink": {
+						"type": "AzureBlobFSSink"
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 0
+				},
+				"inputs": [
+					{
+						"referenceName": "ADLS_Gen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "rawzone-orc"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADLS_Gen2",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "rawzone"
+						}
+					}
+				]
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

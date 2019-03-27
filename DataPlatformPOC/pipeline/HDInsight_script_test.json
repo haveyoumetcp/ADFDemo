@@ -1,0 +1,152 @@
+{
+	"name": "HDInsight_script_test",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetExternalTableScript",
+				"type": "Lookup",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[uspGetExternalTableSchemaSQLServer]",
+						"storedProcedureParameters": {
+							"DatabaseName": {
+								"type": "String",
+								"value": "avidpaytransaction"
+							},
+							"EscapeChar": {
+								"type": "String",
+								"value": "\""
+							},
+							"NumberHeaderLinesSkip": {
+								"type": "String",
+								"value": "1"
+							},
+							"SchemaName": {
+								"type": "String",
+								"value": "trn"
+							},
+							"SeparatorChar": {
+								"type": "String",
+								"value": ","
+							},
+							"TableName": {
+								"type": "String",
+								"value": "tpayment"
+							}
+						}
+					},
+					"dataset": {
+						"referenceName": "ETLConfigDB_DS",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "CopyExternalTableScriptToStorage",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[uspGetExternalTableSchemaSQLServer]",
+						"storedProcedureParameters": {
+							"DatabaseName": {
+								"type": "String",
+								"value": "avidpaytransaction"
+							},
+							"EscapeChar": {
+								"type": "String",
+								"value": "\""
+							},
+							"NumberHeaderLinesSkip": {
+								"type": "String",
+								"value": "1"
+							},
+							"SchemaName": {
+								"type": "String",
+								"value": "trn"
+							},
+							"SeparatorChar": {
+								"type": "String",
+								"value": ","
+							},
+							"TableName": {
+								"type": "String",
+								"value": "tpayment"
+							}
+						}
+					},
+					"sink": {
+						"type": "BlobSink"
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 0
+				},
+				"inputs": [
+					{
+						"referenceName": "ETLConfigDB_DS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ExternalTableScript_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "avidpaytransaction/trn/tpayment.hql",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "CreateExternalTable",
+				"type": "HDInsightHive",
+				"dependsOn": [
+					{
+						"activity": "CopyExternalTableScriptToStorage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"scriptPath": "hiveexternaltablescripts/avidpaytransaction/trn/tpayment.hql",
+					"getDebugInfo": "Always",
+					"scriptLinkedService": {
+						"referenceName": "avidxsacpollockhdinsight",
+						"type": "LinkedServiceReference"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "avidxhdinsightcpollocksandbox",
+					"type": "LinkedServiceReference"
+				}
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

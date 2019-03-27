@@ -1,0 +1,48 @@
+{
+	"name": "Curated",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Data",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "HiveSource",
+						"query": "WITH pdtmp AS\n(\nSELECT pd.PaymentID, SUM(pd.InvoiceNet) as Amount \nFROM AvidPayTransaction_trn_tPaymentDetail_snapshot pd\nGROUP BY pd.PaymentID\n)\n\nSELECT\n\ttcbm.CustomerID,\n\ttBank.Name as BankAccount,\n\ttPayment.ONSTnumber as CheckNumber,\n\ttPayment.`Date` as PaymentDate,\n\ttpaytype.Descr as Status,\n\ttPayer.ClientPayerID as EntityID,\n\ttPayee.Name as VendorName,\n\ttPayee.ClientPayeeID as VendorID,\n\tpm.Descr as PaymentMethod,\n\tpd.Amount,\n\ttPayment.LastUpdateTime AS PaymentLastUpdateTime\nFROM AvidPayTransaction_trn_tPayment_snapshot AS tPayment \n\tLEFT OUTER JOIN AvidPayTransaction_trn_tPayee_snapshot AS tPayee ON tPayment.PayeeID = tPayee.PayeeID\n\tLEFT OUTER JOIN AvidPayTransaction_trn_tPayer_snapshot AS tPayer ON tPayer.PayerID = tPayment.PayerID\n\tLEFT OUTER JOIN AvidPayTransaction_pfl_tBank_snapshot AS tBank ON tPayment.BankID = tBank.BankID\n\tLEFT OUTER JOIN AvidPayTransaction_static_tPaymentMethod_snapshot AS pm ON tPayment.PaymentMethodID = pm.PaymentMethodID\n\tLEFT OUTER JOIN AvidPayTransaction_pfl_tUser_snapshot AS tUser ON tUser.UserID = tPayment.UserID\n\tLEFT OUTER JOIN AvidPayTransaction_pfl_tOrganization_snapshot AS org ON org.OrganizationID = tUser.OrganizationID\n\tLEFT OUTER JOIN AvidPayTransaction_pfl_tBuyer_snapshot AS tBuyer ON tBuyer.BuyerID = org.OrganizationID\n\tLEFT OUTER JOIN Ordermanagement_neo_tCustomerBuyerMapping_snapshot AS tcbm ON tcbm.BuyerID = tBuyer.AvidSuiteOrganizationID\n\tLEFT OUTER JOIN AvidPayTransaction_static_tPaymentType_snapshot AS tpaytype ON tpaytype.PaymentTypeID = tPayment.PaymentTypeID\n\tLEFT OUTER JOIN pdtmp AS pd ON pd.PaymentID = tPayment.PaymentID;"
+					},
+					"sink": {
+						"type": "AzureDataLakeStoreSink"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Hive_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"ObjectName": " "
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADLS_Gen1_orc",
+						"type": "DatasetReference",
+						"parameters": {
+							"Directory": "curated/avidpay_payment_summary",
+							"FileName": "avidpay_payment_summary.orc"
+						}
+					}
+				]
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

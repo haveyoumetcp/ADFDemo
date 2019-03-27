@@ -1,0 +1,22 @@
+{
+	"name": "Hive_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Hive_avidxhdisparkcpollocksandbox2",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ObjectName": {
+				"type": "String"
+			}
+		},
+		"type": "HiveObject",
+		"typeProperties": {
+			"tableName": {
+				"value": "@dataset().ObjectName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

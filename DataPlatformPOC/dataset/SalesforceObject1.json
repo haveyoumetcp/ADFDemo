@@ -1,0 +1,11 @@
+{
+	"name": "SalesforceObject1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SalesforceOrg1",
+			"type": "LinkedServiceReference"
+		},
+		"type": "SalesforceObject"
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
