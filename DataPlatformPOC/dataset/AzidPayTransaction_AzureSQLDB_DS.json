@@ -1,0 +1,24 @@
+{
+	"name": "AzidPayTransaction_AzureSQLDB_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AvidPayTransaction_AzureSQLDB",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SchemaName": {
+				"type": "String"
+			},
+			"ObjectName": {
+				"type": "String"
+			}
+		},
+		"type": "AzureSqlTable",
+		"typeProperties": {
+			"tableName": {
+				"value": "[@{dataset().SchemaName}].[@{dataset().ObjectName}]",
+				"type": "Expression"
+			}
+		}
+	}
+}
