@@ -1,0 +1,24 @@
+{
+	"name": "ODS_DS1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ODS1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SchemaName": {
+				"type": "String"
+			},
+			"TableName": {
+				"type": "String"
+			}
+		},
+		"type": "AzureSqlTable",
+		"typeProperties": {
+			"tableName": {
+				"value": "[@{dataset().SchemaName}].[@{dataset().TableName}]",
+				"type": "Expression"
+			}
+		}
+	}
+}
