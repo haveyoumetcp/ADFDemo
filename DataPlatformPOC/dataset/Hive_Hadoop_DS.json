@@ -1,0 +1,21 @@
+{
+	"name": "Hive_Hadoop_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Hive_avidxhdihadoopcpollocksandbox",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ObjectName": {
+				"type": "String"
+			}
+		},
+		"type": "HiveObject",
+		"typeProperties": {
+			"tableName": {
+				"value": "@dataset().ObjectName",
+				"type": "Expression"
+			}
+		}
+	}
+}
