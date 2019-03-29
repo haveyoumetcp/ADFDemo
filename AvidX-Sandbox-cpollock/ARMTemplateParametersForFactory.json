@@ -35,9 +35,6 @@
 		"SalesforceOrg1_securityToken": {
 			"value": ""
 		},
-		"avidxhdinsightcpollocksandbox_password": {
-			"value": ""
-		},
 		"avidxhdisparkcpollocksandbox_password": {
 			"value": ""
 		},
@@ -163,9 +160,6 @@
 		},
 		"SalesforceOrg1_properties_typeProperties_username": {
 			"value": "mdpintegrations@avidxchange.com.qasit"
-		},
-		"avidxhdinsightcpollocksandbox_properties_typeProperties_userName": {
-			"value": "admin"
 		},
 		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
 			"value": "admin"

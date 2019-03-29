@@ -47,10 +47,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'securityToken' of 'SalesforceOrg1'"
 		},
-		"avidxhdinsightcpollocksandbox_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'avidxhdinsightcpollocksandbox'"
-		},
 		"avidxhdisparkcpollocksandbox_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox'"
@@ -219,10 +215,6 @@
 			"type": "string",
 			"defaultValue": "mdpintegrations@avidxchange.com.qasit"
 		},
-		"avidxhdinsightcpollocksandbox_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
-		},
 		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "admin"
@@ -384,9 +376,6 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"avidxhdinsightcpollocksandbox_password": {
-						"value": "[parameters('avidxhdinsightcpollocksandbox_password')]"
-					},
 					"avidxhdisparkcpollocksandbox_password": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
 					},
@@ -434,9 +423,6 @@
 					},
 					"tbatchexportstatusAVRO_gen2_properties_typeProperties_folderPath": {
 						"value": "[parameters('tbatchexportstatusAVRO_gen2_properties_typeProperties_folderPath')]"
-					},
-					"avidxhdinsightcpollocksandbox_properties_typeProperties_userName": {
-						"value": "[parameters('avidxhdinsightcpollocksandbox_properties_typeProperties_userName')]"
 					},
 					"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_properties_typeProperties_userName')]"
