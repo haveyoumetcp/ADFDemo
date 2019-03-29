@@ -17,9 +17,6 @@
 		"Hive_avidxhdinsightcpollocksandbox_password": {
 			"value": ""
 		},
-		"Hive_avidxhdisparkcpollocksandbox2_password": {
-			"value": ""
-		},
 		"ODS_connectionString": {
 			"value": ""
 		},
@@ -147,9 +144,6 @@
 			"value": "cpollock-rg"
 		},
 		"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
-			"value": "admin"
-		},
-		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
 			"value": "admin"
 		},
 		"SalesforceOrg1_properties_typeProperties_username": {

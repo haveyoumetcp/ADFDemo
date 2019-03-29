@@ -23,10 +23,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdinsightcpollocksandbox'"
 		},
-		"Hive_avidxhdisparkcpollocksandbox2_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox2'"
-		},
 		"ODS_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ODS'"
@@ -84,10 +80,6 @@
 			"defaultValue": "cpollock-rg"
 		},
 		"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
-			"type": "string",
-			"defaultValue": "admin"
-		},
-		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "admin"
 		},
@@ -154,6 +146,14 @@
 		"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "@toLower(dataset().Directory)"
+		},
+		"ADLS_Gen2_orc_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@replace(dataset().FileName,' ','')"
+		},
+		"ADLS_Gen2_orc_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
 		}
 	},
 	"variables": {
@@ -254,31 +254,6 @@
 					"password": {
 						"type": "SecureString",
 						"value": "[parameters('Hive_avidxhdinsightcpollocksandbox_password')]"
-					},
-					"enableSsl": false
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Hive_avidxhdisparkcpollocksandbox2')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Hive",
-				"typeProperties": {
-					"host": "avidxhdisparkcpollocksandbox2.azurehdinsight.net",
-					"port": 443,
-					"serverType": "HiveServer2",
-					"thriftTransportProtocol": null,
-					"authenticationType": "WindowsAzureHDInsightService",
-					"serviceDiscoveryMode": false,
-					"useNativeQuery": false,
-					"username": "[parameters('Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_password')]"
 					},
 					"enableSsl": false
 				}
@@ -641,6 +616,43 @@
 					},
 					"folderPath": {
 						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS_Gen2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2_orc')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_Gen2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String"
+					},
+					"FileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureBlobFSFile",
+				"typeProperties": {
+					"format": {
+						"type": "OrcFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_folderPath')]",
 						"type": "Expression"
 					}
 				}

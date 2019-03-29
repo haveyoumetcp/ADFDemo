@@ -23,10 +23,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdinsightcpollocksandbox'"
 		},
-		"Hive_avidxhdisparkcpollocksandbox2_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox2'"
-		},
 		"ODS_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ODS'"
@@ -196,10 +192,6 @@
 			"defaultValue": "cpollock-rg"
 		},
 		"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
-			"type": "string",
-			"defaultValue": "admin"
-		},
-		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "admin"
 		},
@@ -3479,31 +3471,6 @@
 					"password": {
 						"type": "SecureString",
 						"value": "[parameters('Hive_avidxhdinsightcpollocksandbox_password')]"
-					},
-					"enableSsl": false
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Hive_avidxhdisparkcpollocksandbox2')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "Hive",
-				"typeProperties": {
-					"host": "avidxhdisparkcpollocksandbox2.azurehdinsight.net",
-					"port": 443,
-					"serverType": "HiveServer2",
-					"thriftTransportProtocol": null,
-					"authenticationType": "WindowsAzureHDInsightService",
-					"serviceDiscoveryMode": false,
-					"useNativeQuery": false,
-					"username": "[parameters('Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_password')]"
 					},
 					"enableSsl": false
 				}
