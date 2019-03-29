@@ -13,72 +13,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/Copy_ADLS_Gen1_csv_to_ADLS_Gen2_avro')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy Data",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureDataLakeStoreSource",
-								"recursive": true
-							},
-							"sink": {
-								"type": "AzureBlobFSSink"
-							},
-							"enableStaging": false,
-							"dataIntegrationUnits": 0
-						},
-						"inputs": [
-							{
-								"referenceName": "ADLS_Gen1_csv",
-								"type": "DatasetReference",
-								"parameters": {
-									"Directory": {
-										"value": "@pipeline().parameters.Directory",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ADLS_Gen2_avro",
-								"type": "DatasetReference",
-								"parameters": {
-									"Directory": {
-										"value": "@pipeline().parameters.Directory",
-										"type": "Expression"
-									},
-									"FileName": " "
-								}
-							}
-						]
-					}
-				],
-				"parameters": {
-					"Directory": {
-						"type": "String",
-						"defaultValue": "rawzone"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Copy_ADLS_Gen1_csv_to_ADLS_Gen2_orc')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2155,6 +2089,44 @@
 				"annotations": []
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestTrigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "tbatchexportstatus_AzureSQLDB_to_ADLS_gen1",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2019-03-01T18:41:00Z",
+						"timeZone": "UTC",
+						"schedule": {
+							"minutes": [
+								0
+							],
+							"hours": [
+								20
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/tbatchexportstatus_AzureSQLDB_to_ADLS_gen1')]"
+			]
 		}
 	]
 }

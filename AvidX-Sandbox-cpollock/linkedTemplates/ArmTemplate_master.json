@@ -51,10 +51,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox'"
 		},
-		"avidxhdisparkcpollocksandbox2_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox2'"
-		},
 		"avidxsacpollockhdinsight_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
@@ -219,10 +215,6 @@
 			"type": "string",
 			"defaultValue": "admin"
 		},
-		"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -379,9 +371,6 @@
 					"avidxhdisparkcpollocksandbox_password": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
 					},
-					"avidxhdisparkcpollocksandbox2_password": {
-						"value": "[parameters('avidxhdisparkcpollocksandbox2_password')]"
-					},
 					"ADLS_Gen2_avro_properties_typeProperties_fileName": {
 						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]"
 					},
@@ -426,9 +415,6 @@
 					},
 					"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_properties_typeProperties_userName')]"
-					},
-					"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
-						"value": "[parameters('avidxhdisparkcpollocksandbox2_properties_typeProperties_userName')]"
 					}
 				}
 			},
@@ -454,26 +440,6 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_1')]"
-			]
-		},
-		{
-			"name": "ArmTemplate_3",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
-			"properties": {
-				"mode": "incremental",
-				"templateLink": {
-					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
-					"contentVersion": "1.0.0.0"
-				},
-				"parameters": {
-					"factoryName": {
-						"value": "[parameters('factoryName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_2')]"
 			]
 		}
 	]

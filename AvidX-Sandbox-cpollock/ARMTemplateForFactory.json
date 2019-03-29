@@ -51,10 +51,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox'"
 		},
-		"avidxhdisparkcpollocksandbox2_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox2'"
-		},
 		"avidxsacpollockhdinsight_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
@@ -216,10 +212,6 @@
 			"defaultValue": "mdpintegrations@avidxchange.com.qasit"
 		},
 		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
-		},
-		"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "admin"
 		}
@@ -3596,31 +3588,6 @@
 					"password": {
 						"type": "SecureString",
 						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
-					},
-					"isEspEnabled": false,
-					"linkedServiceName": {
-						"referenceName": "avidxsacpollockhdinsight",
-						"type": "LinkedServiceReference"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/avidxhdisparkcpollocksandbox2')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "HDInsight",
-				"typeProperties": {
-					"clusterUri": "https://avidxhdisparkcpollocksandbox2.azurehdinsight.net",
-					"userName": "[parameters('avidxhdisparkcpollocksandbox2_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('avidxhdisparkcpollocksandbox2_password')]"
 					},
 					"isEspEnabled": false,
 					"linkedServiceName": {

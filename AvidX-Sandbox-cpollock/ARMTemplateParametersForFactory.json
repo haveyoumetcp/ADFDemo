@@ -38,9 +38,6 @@
 		"avidxhdisparkcpollocksandbox_password": {
 			"value": ""
 		},
-		"avidxhdisparkcpollocksandbox2_password": {
-			"value": ""
-		},
 		"avidxsacpollockhdinsight_connectionString": {
 			"value": ""
 		},
@@ -162,9 +159,6 @@
 			"value": "mdpintegrations@avidxchange.com.qasit"
 		},
 		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
-			"value": "admin"
-		},
-		"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
 			"value": "admin"
 		}
 	}
