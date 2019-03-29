@@ -1,0 +1,107 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "avidx-sandbox-cpollock"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ExecuteHiveSnapshotScripts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetObjectList",
+						"type": "Lookup",
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 5,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderQuery": {
+									"value": "SELECT DISTINCT ISNULL(FriendlyDatabaseName, DatabaseName) AS DatabaseName, SchemaName, ObjectName\nFROM [dbo].[vwMetadataSQLServer]\nWHERE IsLatestLoad = 1\n\tAND (ISNULL(FriendlyDatabaseName, DatabaseName) = '@{pipeline().parameters.DatabaseName}' OR NULLIF(TRIM('@{pipeline().parameters.DatabaseName}'),'') IS NULL)\n\tAND (SchemaName = '@{pipeline().parameters.SchemaName}' OR NULLIF(TRIM('@{pipeline().parameters.SchemaName}'),'') IS NULL)\n\tAND (ObjectName = '@{pipeline().parameters.ObjectName}' OR NULLIF(TRIM('@{pipeline().parameters.ObjectName}'),'') IS NULL)",
+									"type": "Expression"
+								}
+							},
+							"dataset": {
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference"
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE_ExecuteHiveSnapshotScripts",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetObjectList",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetObjectList').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 10,
+							"activities": [
+								{
+									"name": "ExecuteHiveSnapshotScript",
+									"type": "HDInsightHive",
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 5,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"typeProperties": {
+										"scriptPath": {
+											"value": "@toLower(CONCAT('hivesnapshotscripts/',item().DatabaseName,'/',item().SchemaName,'/',item().ObjectName,'.hql'))",
+											"type": "Expression"
+										},
+										"scriptLinkedService": {
+											"referenceName": "avidxsacpollockhdinsight",
+											"type": "LinkedServiceReference"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "avidxhdisparkcpollocksandbox",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					}
+				}
+			}
+		}
+	]
+}

@@ -1755,7 +1755,7 @@
 										}
 									},
 									"linkedServiceName": {
-										"referenceName": "avidxhdisparkcpollocksandbox2",
+										"referenceName": "avidxhdisparkcpollocksandbox",
 										"type": "LinkedServiceReference"
 									}
 								}
@@ -1779,7 +1779,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ETLConfigDB_DS')]",
 				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]",
-				"[concat(variables('factoryId'), '/linkedServices/avidxhdisparkcpollocksandbox2')]"
+				"[concat(variables('factoryId'), '/linkedServices/avidxhdisparkcpollocksandbox')]"
 			]
 		},
 		{
