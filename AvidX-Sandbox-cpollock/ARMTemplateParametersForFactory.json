@@ -3,9 +3,12 @@
 	"contentVersion": "1.0.0.0",
 	"parameters": {
 		"factoryName": {
-			"value": "AvidX-Sandbox-cpollock"
+			"value": "avidx-sandbox-cpollock"
 		},
 		"ADLS_Gen2_accountKey": {
+			"value": ""
+		},
+		"AvidPayTransaction_AzureSQLDB_connectionString": {
 			"value": ""
 		},
 		"ETLConfigDB_connectionString": {
@@ -42,9 +45,6 @@
 			"value": ""
 		},
 		"avidxsacpollockhdinsight_connectionString": {
-			"value": ""
-		},
-		"AvidPayTransaction_AzureSQLDB_connectionString": {
 			"value": ""
 		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {

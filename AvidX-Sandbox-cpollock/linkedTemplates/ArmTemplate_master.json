@@ -5,11 +5,15 @@
 		"factoryName": {
 			"type": "string",
 			"metadata": "Data Factory Name",
-			"defaultValue": "AvidX-Sandbox-cpollock"
+			"defaultValue": "avidx-sandbox-cpollock"
 		},
 		"ADLS_Gen2_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ADLS_Gen2'"
+		},
+		"AvidPayTransaction_AzureSQLDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AvidPayTransaction_AzureSQLDB'"
 		},
 		"ETLConfigDB_connectionString": {
 			"type": "secureString",
@@ -58,10 +62,6 @@
 		"avidxsacpollockhdinsight_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
-		},
-		"AvidPayTransaction_AzureSQLDB_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AvidPayTransaction_AzureSQLDB'"
 		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {
 			"type": "string",
@@ -261,6 +261,9 @@
 					"ADLS_Gen2_accountKey": {
 						"value": "[parameters('ADLS_Gen2_accountKey')]"
 					},
+					"AvidPayTransaction_AzureSQLDB_connectionString": {
+						"value": "[parameters('AvidPayTransaction_AzureSQLDB_connectionString')]"
+					},
 					"ETLConfigDB_connectionString": {
 						"value": "[parameters('ETLConfigDB_connectionString')]"
 					},
@@ -287,9 +290,6 @@
 					},
 					"avidxsacpollockhdinsight_connectionString": {
 						"value": "[parameters('avidxsacpollockhdinsight_connectionString')]"
-					},
-					"AvidPayTransaction_AzureSQLDB_connectionString": {
-						"value": "[parameters('AvidPayTransaction_AzureSQLDB_connectionString')]"
 					},
 					"ADLS_Gen1_properties_typeProperties_dataLakeStoreUri": {
 						"value": "[parameters('ADLS_Gen1_properties_typeProperties_dataLakeStoreUri')]"

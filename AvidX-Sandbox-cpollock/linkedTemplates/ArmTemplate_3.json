@@ -5,13 +5,68 @@
 		"factoryName": {
 			"type": "string",
 			"metadata": "Data Factory Name",
-			"defaultValue": "AvidX-Sandbox-cpollock"
+			"defaultValue": "avidx-sandbox-cpollock"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/SalesforceOrg1toADLSGen2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SalesforceSource",
+								"query": "SELECT id,username,lastname,firstname,name,companyname,division,department,title,street,city,state,postalcode,country,latitude,longitude,geocodeaccuracy,email,systemmodstamp\nFROM User LIMIT 10",
+								"readBehavior": "queryAll"
+							},
+							"sink": {
+								"type": "AzureBlobFSSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "SalesforceObject1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen2_avro",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "raw/salesforceorg1/user",
+									"FileName": {
+										"value": "user-@{pipeline().RunId}.avro",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/tbatchexportstatus_AzureSQLDB_to_ADLS_gen1')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -66,84 +121,6 @@
 				],
 				"parameters": {
 					"test_parameter": {
-						"type": "String"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSQLDB_to_AzureSQLDB')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy Data",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlSource"
-							},
-							"sink": {
-								"type": "SqlSink",
-								"writeBatchSize": 25000,
-								"preCopyScript": {
-									"value": "DROP TABLE IF EXISTS [@{pipeline().parameters.SchemaName}].[@{pipeline().parameters.TableName}]",
-									"type": "Expression"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "ODS_DS",
-								"type": "DatasetReference",
-								"parameters": {
-									"SchemaName": {
-										"value": "@pipeline().parameters.SchemaName",
-										"type": "Expression"
-									},
-									"ObjectName": {
-										"value": "@pipeline().parameters.TableName",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzidPayTransaction_AzureSQLDB_DS",
-								"type": "DatasetReference",
-								"parameters": {
-									"SchemaName": {
-										"value": "@pipeline().parameters.SchemaName",
-										"type": "Expression"
-									},
-									"ObjectName": {
-										"value": "@pipeline().parameters.TableName",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"parameters": {
-					"SchemaName": {
-						"type": "String"
-					},
-					"TableName": {
 						"type": "String"
 					}
 				},

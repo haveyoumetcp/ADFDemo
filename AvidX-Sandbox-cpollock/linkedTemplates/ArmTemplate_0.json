@@ -5,11 +5,15 @@
 		"factoryName": {
 			"type": "string",
 			"metadata": "Data Factory Name",
-			"defaultValue": "AvidX-Sandbox-cpollock"
+			"defaultValue": "avidx-sandbox-cpollock"
 		},
 		"ADLS_Gen2_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ADLS_Gen2'"
+		},
+		"AvidPayTransaction_AzureSQLDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AvidPayTransaction_AzureSQLDB'"
 		},
 		"ETLConfigDB_connectionString": {
 			"type": "secureString",
@@ -46,10 +50,6 @@
 		"avidxsacpollockhdinsight_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
-		},
-		"AvidPayTransaction_AzureSQLDB_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AvidPayTransaction_AzureSQLDB'"
 		},
 		"ADLS_Gen1_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",
@@ -185,6 +185,19 @@
 						"type": "SecureString",
 						"value": "[parameters('ADLS_Gen2_accountKey')]"
 					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AvidPayTransaction_AzureSQLDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AvidPayTransaction_AzureSQLDB_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -338,19 +351,6 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('avidxsacpollockhdinsight_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AvidPayTransaction_AzureSQLDB')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AvidPayTransaction_AzureSQLDB_connectionString')]"
 				}
 			},
 			"dependsOn": []

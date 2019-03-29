@@ -5,11 +5,15 @@
 		"factoryName": {
 			"type": "string",
 			"metadata": "Data Factory Name",
-			"defaultValue": "AvidX-Sandbox-cpollock"
+			"defaultValue": "avidx-sandbox-cpollock"
 		},
 		"ADLS_Gen2_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ADLS_Gen2'"
+		},
+		"AvidPayTransaction_AzureSQLDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AvidPayTransaction_AzureSQLDB'"
 		},
 		"ETLConfigDB_connectionString": {
 			"type": "secureString",
@@ -58,10 +62,6 @@
 		"avidxsacpollockhdinsight_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
-		},
-		"AvidPayTransaction_AzureSQLDB_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AvidPayTransaction_AzureSQLDB'"
 		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {
 			"type": "string",
@@ -236,6 +236,87 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSQLDB_to_AzureSQLDB')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource"
+							},
+							"sink": {
+								"type": "SqlSink",
+								"writeBatchSize": 25000,
+								"preCopyScript": {
+									"value": "DROP TABLE IF EXISTS [@{pipeline().parameters.SchemaName}].[@{pipeline().parameters.TableName}]",
+									"type": "Expression"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ODS_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"SchemaName": {
+										"value": "@pipeline().parameters.SchemaName",
+										"type": "Expression"
+									},
+									"ObjectName": {
+										"value": "@pipeline().parameters.TableName",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzidPayTransaction_AzureSQLDB_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"SchemaName": {
+										"value": "@pipeline().parameters.SchemaName",
+										"type": "Expression"
+									},
+									"ObjectName": {
+										"value": "@pipeline().parameters.TableName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"SchemaName": {
+						"type": "String"
+					},
+					"TableName": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ODS_DS')]",
+				"[concat(variables('factoryId'), '/datasets/AzidPayTransaction_AzureSQLDB_DS')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/AzureSQL_to_ADLS_Gen2_avro')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -1900,7 +1981,7 @@
 							}
 						},
 						"linkedServiceName": {
-							"referenceName": "avidxhdinsightcpollocksandbox",
+							"referenceName": "avidxhdisparkcpollocksandbox",
 							"type": "LinkedServiceReference"
 						}
 					}
@@ -1911,7 +1992,7 @@
 				"[concat(variables('factoryId'), '/datasets/ETLConfigDB_DS')]",
 				"[concat(variables('factoryId'), '/datasets/ExternalTableScript_DS')]",
 				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]",
-				"[concat(variables('factoryId'), '/linkedServices/avidxhdinsightcpollocksandbox')]"
+				"[concat(variables('factoryId'), '/linkedServices/avidxhdisparkcpollocksandbox')]"
 			]
 		},
 		{
@@ -3030,6 +3111,36 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzidPayTransaction_AzureSQLDB_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AvidPayTransaction_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"typeProperties": {
+					"tableName": {
+						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().ObjectName}]')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AvidPayTransaction_AzureSQLDB')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ETLConfigDB_DS')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3425,6 +3536,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AvidPayTransaction_AzureSQLDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AvidPayTransaction_AzureSQLDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStore1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3689,130 +3813,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/tbatchexportstatus_AzureSQLDB_to_ADLS_gen1')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSQLDB_to_AzureSQLDB')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy Data",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlSource"
-							},
-							"sink": {
-								"type": "SqlSink",
-								"writeBatchSize": 25000,
-								"preCopyScript": {
-									"value": "DROP TABLE IF EXISTS [@{pipeline().parameters.SchemaName}].[@{pipeline().parameters.TableName}]",
-									"type": "Expression"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "ODS_DS",
-								"type": "DatasetReference",
-								"parameters": {
-									"SchemaName": {
-										"value": "@pipeline().parameters.SchemaName",
-										"type": "Expression"
-									},
-									"ObjectName": {
-										"value": "@pipeline().parameters.TableName",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzidPayTransaction_AzureSQLDB_DS",
-								"type": "DatasetReference",
-								"parameters": {
-									"SchemaName": {
-										"value": "@pipeline().parameters.SchemaName",
-										"type": "Expression"
-									},
-									"ObjectName": {
-										"value": "@pipeline().parameters.TableName",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"parameters": {
-					"SchemaName": {
-						"type": "String"
-					},
-					"TableName": {
-						"type": "String"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ODS_DS')]",
-				"[concat(variables('factoryId'), '/datasets/AzidPayTransaction_AzureSQLDB_DS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzidPayTransaction_AzureSQLDB_DS')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AvidPayTransaction_AzureSQLDB",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"SchemaName": {
-						"type": "String"
-					},
-					"ObjectName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"typeProperties": {
-					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().ObjectName}]')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AvidPayTransaction_AzureSQLDB')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AvidPayTransaction_AzureSQLDB')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AvidPayTransaction_AzureSQLDB_connectionString')]"
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }
