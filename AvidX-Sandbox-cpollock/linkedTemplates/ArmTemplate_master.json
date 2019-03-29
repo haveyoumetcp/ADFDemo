@@ -19,10 +19,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ETLConfigDB'"
 		},
-		"HiveMetadata_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'HiveMetadata'"
-		},
 		"Hive_avidxhdinsightcpollocksandbox_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdinsightcpollocksandbox'"
@@ -251,9 +247,6 @@
 					"ETLConfigDB_connectionString": {
 						"value": "[parameters('ETLConfigDB_connectionString')]"
 					},
-					"HiveMetadata_connectionString": {
-						"value": "[parameters('HiveMetadata_connectionString')]"
-					},
 					"Hive_avidxhdinsightcpollocksandbox_password": {
 						"value": "[parameters('Hive_avidxhdinsightcpollocksandbox_password')]"
 					},
@@ -349,6 +342,12 @@
 					},
 					"ADLS_Gen2_properties_typeProperties_folderPath": {
 						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen2_avro_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -370,12 +369,6 @@
 					},
 					"avidxhdisparkcpollocksandbox_password": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
-					},
-					"ADLS_Gen2_avro_properties_typeProperties_fileName": {
-						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]"
-					},
-					"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
-						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_folderPath')]"
 					},
 					"ADLS_Gen2_orc_properties_typeProperties_fileName": {
 						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_fileName')]"

@@ -19,10 +19,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ETLConfigDB'"
 		},
-		"HiveMetadata_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'HiveMetadata'"
-		},
 		"Hive_avidxhdinsightcpollocksandbox_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdinsightcpollocksandbox'"
@@ -150,6 +146,14 @@
 		"ADLS_Gen2_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen2_avro_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@toLower(replace(dataset().FileName,' ',''))"
+		},
+		"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@toLower(dataset().Directory)"
 		}
 	},
 	"variables": {
@@ -227,19 +231,6 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('ETLConfigDB_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/HiveMetadata')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('HiveMetadata_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -613,6 +604,43 @@
 				"typeProperties": {
 					"folderPath": {
 						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS_Gen2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2_avro')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_Gen2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String"
+					},
+					"FileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureBlobFSFile",
+				"typeProperties": {
+					"format": {
+						"type": "AvroFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_folderPath')]",
 						"type": "Expression"
 					}
 				}

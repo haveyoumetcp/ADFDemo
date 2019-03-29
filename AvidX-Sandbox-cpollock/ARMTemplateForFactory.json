@@ -19,10 +19,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ETLConfigDB'"
 		},
-		"HiveMetadata_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'HiveMetadata'"
-		},
 		"Hive_avidxhdinsightcpollocksandbox_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdinsightcpollocksandbox'"
@@ -3460,19 +3456,6 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('ETLConfigDB_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/HiveMetadata')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('HiveMetadata_connectionString')]"
 				}
 			},
 			"dependsOn": []

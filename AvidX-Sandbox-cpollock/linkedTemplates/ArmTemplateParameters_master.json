@@ -14,9 +14,6 @@
 		"ETLConfigDB_connectionString": {
 			"value": ""
 		},
-		"HiveMetadata_connectionString": {
-			"value": ""
-		},
 		"Hive_avidxhdinsightcpollocksandbox_password": {
 			"value": ""
 		},

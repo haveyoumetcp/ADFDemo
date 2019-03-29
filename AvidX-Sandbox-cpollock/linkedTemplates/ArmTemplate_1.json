@@ -11,14 +11,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox'"
 		},
-		"ADLS_Gen2_avro_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@toLower(replace(dataset().FileName,' ',''))"
-		},
-		"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@toLower(dataset().Directory)"
-		},
 		"ADLS_Gen2_orc_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": "@replace(dataset().FileName,' ','')"
@@ -76,41 +68,6 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2_avro')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_Gen2",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String"
-					},
-					"FileName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureBlobFSFile",
-				"typeProperties": {
-					"format": {
-						"type": "AvroFormat"
-					},
-					"fileName": {
-						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]",
-						"type": "Expression"
-					},
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": []
-		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2_orc')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -683,8 +640,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ODS_DS')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Gen2_avro')]"
+				"[concat(variables('factoryId'), '/datasets/ODS_DS')]"
 			]
 		},
 		{
@@ -822,8 +778,74 @@
 				},
 				"annotations": []
 			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy_ADLS_Gen1_csv_to_ADLS_Gen2_orc')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureDataLakeStoreSource",
+								"recursive": true
+							},
+							"sink": {
+								"type": "AzureBlobFSSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Gen1_csv",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@pipeline().parameters.Directory",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen2_orc",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@pipeline().parameters.Directory",
+										"type": "Expression"
+									},
+									"FileName": " "
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"Directory": {
+						"type": "String",
+						"defaultValue": "rawzone"
+					}
+				},
+				"annotations": []
+			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ADLS_Gen2_avro')]"
+				"[concat(variables('factoryId'), '/datasets/ADLS_Gen2_orc')]"
 			]
 		}
 	]
