@@ -1429,7 +1429,7 @@
 							}
 						},
 						"linkedServiceName": {
-							"referenceName": "avidxhdisparkcpollocksandbox2",
+							"referenceName": "avidxhdisparkcpollocksandbox",
 							"type": "LinkedServiceReference"
 						}
 					}
@@ -1438,7 +1438,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]",
-				"[concat(variables('factoryId'), '/linkedServices/avidxhdisparkcpollocksandbox2')]"
+				"[concat(variables('factoryId'), '/linkedServices/avidxhdisparkcpollocksandbox')]"
 			]
 		},
 		{
@@ -3139,7 +3139,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Hive_avidxhdisparkcpollocksandbox2",
+					"referenceName": "Hive_avidxhdinsightcpollocksandbox",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -3157,7 +3157,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Hive_avidxhdisparkcpollocksandbox2')]"
+				"[concat(variables('factoryId'), '/linkedServices/Hive_avidxhdinsightcpollocksandbox')]"
 			]
 		},
 		{

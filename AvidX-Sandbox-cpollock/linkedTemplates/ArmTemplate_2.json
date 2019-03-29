@@ -961,7 +961,7 @@
 							}
 						},
 						"linkedServiceName": {
-							"referenceName": "avidxhdisparkcpollocksandbox2",
+							"referenceName": "avidxhdisparkcpollocksandbox",
 							"type": "LinkedServiceReference"
 						}
 					}
