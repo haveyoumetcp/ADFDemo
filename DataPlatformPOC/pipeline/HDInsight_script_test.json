@@ -142,7 +142,7 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "avidxhdinsightcpollocksandbox",
+					"referenceName": "avidxhdisparkcpollocksandbox",
 					"type": "LinkedServiceReference"
 				}
 			}
