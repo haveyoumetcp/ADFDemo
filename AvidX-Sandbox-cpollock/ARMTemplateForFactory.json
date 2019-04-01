@@ -2599,11 +2599,11 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"Directory": {
-										"value": "rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName}",
+										"value": "toLower(rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName})",
 										"type": "Expression"
 									},
 									"FileName": {
-										"value": "@{pipeline().parameters.ObjectName}.orc",
+										"value": "toLower(@{pipeline().parameters.ObjectName}.orc)",
 										"type": "Expression"
 									}
 								}
@@ -2968,12 +2968,10 @@
 						"defaultValue": "avidpaytransaction"
 					},
 					"SchemaName": {
-						"type": "String",
-						"defaultValue": "static"
+						"type": "String"
 					},
 					"ObjectName": {
-						"type": "String",
-						"defaultValue": "tpaymenttype"
+						"type": "String"
 					},
 					"StorageAccountLocation": {
 						"type": "String",
