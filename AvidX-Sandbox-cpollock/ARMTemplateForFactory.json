@@ -59,6 +59,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
 		},
+		"avidxsasandboxcpollock_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'avidxsasandboxcpollock'"
+		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -3517,7 +3521,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "avidxsacpollockhdinsight",
+					"referenceName": "avidxsasandboxcpollock",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -3545,7 +3549,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]"
+				"[concat(variables('factoryId'), '/linkedServices/avidxsasandboxcpollock')]"
 			]
 		},
 		{
@@ -3554,7 +3558,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "avidxsacpollockhdinsight",
+					"referenceName": "avidxsasandboxcpollock",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -3589,7 +3593,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]"
+				"[concat(variables('factoryId'), '/linkedServices/avidxsasandboxcpollock')]"
 			]
 		},
 		{
@@ -3751,7 +3755,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "avidxsacpollockhdinsight",
+					"referenceName": "avidxsasandboxcpollock",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -3779,7 +3783,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]"
+				"[concat(variables('factoryId'), '/linkedServices/avidxsasandboxcpollock')]"
 			]
 		},
 		{
@@ -4085,13 +4089,13 @@
 					},
 					"isEspEnabled": false,
 					"linkedServiceName": {
-						"referenceName": "avidxsacpollockhdinsight",
+						"referenceName": "avidxsasandboxcpollock",
 						"type": "LinkedServiceReference"
 					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]"
+				"[concat(variables('factoryId'), '/linkedServices/avidxsasandboxcpollock')]"
 			]
 		},
 		{
@@ -4110,13 +4114,13 @@
 					},
 					"isEspEnabled": false,
 					"linkedServiceName": {
-						"referenceName": "avidxsacpollockhdinsight",
+						"referenceName": "avidxsasandboxcpollock",
 						"type": "LinkedServiceReference"
 					}
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]"
+				"[concat(variables('factoryId'), '/linkedServices/avidxsasandboxcpollock')]"
 			]
 		},
 		{
@@ -4169,6 +4173,19 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/tbatchexportstatus_AzureSQLDB_to_ADLS_gen1')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/avidxsasandboxcpollock')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('avidxsasandboxcpollock_connectionString')]"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

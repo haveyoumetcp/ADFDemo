@@ -44,6 +44,9 @@
 		"avidxsacpollockhdinsight_connectionString": {
 			"value": ""
 		},
+		"avidxsasandboxcpollock_connectionString": {
+			"value": ""
+		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {
 			"value": ""
 		},

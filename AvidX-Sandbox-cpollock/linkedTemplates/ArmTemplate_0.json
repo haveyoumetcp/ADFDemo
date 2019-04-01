@@ -51,6 +51,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
 		},
+		"avidxsasandboxcpollock_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'avidxsasandboxcpollock'"
+		},
 		"ADLS_Gen1_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",
 			"defaultValue": "https://avidxdlsdvtsedw01.azuredatalakestore.net/webhdfs/v1"
@@ -144,10 +148,6 @@
 			"defaultValue": "@replace(dataset().FileName,' ','')"
 		},
 		"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().Directory"
-		},
-		"ADLS_Gen2_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "@dataset().Directory"
 		}
@@ -351,6 +351,19 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('avidxsacpollockhdinsight_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/avidxsasandboxcpollock')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('avidxsasandboxcpollock_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -592,33 +605,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStore1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_Gen2",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureBlobFSFile",
-				"typeProperties": {
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS_Gen2')]"
 			]
 		}
 	]

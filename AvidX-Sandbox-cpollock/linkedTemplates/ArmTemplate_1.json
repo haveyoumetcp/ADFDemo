@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox'"
 		},
+		"ADLS_Gen2_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
 		"ADLS_Gen2_avro_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": "@toLower(replace(dataset().FileName,' ',''))"
@@ -84,6 +88,31 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_Gen2",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureBlobFSFile",
+				"typeProperties": {
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2_avro')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -203,7 +232,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "avidxsacpollockhdinsight",
+					"referenceName": "avidxsasandboxcpollock",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -238,7 +267,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "avidxsacpollockhdinsight",
+					"referenceName": "avidxsasandboxcpollock",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -421,7 +450,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "avidxsacpollockhdinsight",
+					"referenceName": "avidxsasandboxcpollock",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -561,7 +590,7 @@
 					},
 					"isEspEnabled": false,
 					"linkedServiceName": {
-						"referenceName": "avidxsacpollockhdinsight",
+						"referenceName": "avidxsasandboxcpollock",
 						"type": "LinkedServiceReference"
 					}
 				}
@@ -584,7 +613,7 @@
 					},
 					"isEspEnabled": false,
 					"linkedServiceName": {
-						"referenceName": "avidxsacpollockhdinsight",
+						"referenceName": "avidxsasandboxcpollock",
 						"type": "LinkedServiceReference"
 					}
 				}
@@ -670,77 +699,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ODS_DS')]",
 				"[concat(variables('factoryId'), '/datasets/AzidPayTransaction_AzureSQLDB_DS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSQL_to_ADLS_Gen2_avro')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy Data",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlSource",
-								"sqlReaderQuery": {
-									"value": "SELECT * FROM @{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}.@{pipeline().parameters.ObjectName}",
-									"type": "Expression"
-								}
-							},
-							"sink": {
-								"type": "AzureBlobFSSink"
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "ODS_DS",
-								"type": "DatasetReference",
-								"parameters": {
-									"SchemaName": " ",
-									"ObjectName": " "
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "ADLS_Gen2_avro",
-								"type": "DatasetReference",
-								"parameters": {
-									"Directory": "rawzone/integrations/static/tbatchexportstatus/avro/",
-									"FileName": "tbatchexportstatus01292019.avro"
-								}
-							}
-						]
-					}
-				],
-				"parameters": {
-					"DatabaseName": {
-						"type": "String"
-					},
-					"SchemaName": {
-						"type": "String"
-					},
-					"ObjectName": {
-						"type": "String"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ODS_DS')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Gen2_avro')]"
 			]
 		}
 	]

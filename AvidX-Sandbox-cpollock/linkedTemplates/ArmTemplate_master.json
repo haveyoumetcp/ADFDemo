@@ -59,6 +59,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
 		},
+		"avidxsasandboxcpollock_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'avidxsasandboxcpollock'"
+		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": ""
@@ -283,6 +287,9 @@
 					"avidxsacpollockhdinsight_connectionString": {
 						"value": "[parameters('avidxsacpollockhdinsight_connectionString')]"
 					},
+					"avidxsasandboxcpollock_connectionString": {
+						"value": "[parameters('avidxsasandboxcpollock_connectionString')]"
+					},
 					"ADLS_Gen1_properties_typeProperties_dataLakeStoreUri": {
 						"value": "[parameters('ADLS_Gen1_properties_typeProperties_dataLakeStoreUri')]"
 					},
@@ -354,9 +361,6 @@
 					},
 					"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
 						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_folderPath')]"
-					},
-					"ADLS_Gen2_properties_typeProperties_folderPath": {
-						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -381,6 +385,9 @@
 					},
 					"avidxhdisparkcpollocksandbox_password": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
+					},
+					"ADLS_Gen2_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]"
 					},
 					"ADLS_Gen2_avro_properties_typeProperties_fileName": {
 						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]"
