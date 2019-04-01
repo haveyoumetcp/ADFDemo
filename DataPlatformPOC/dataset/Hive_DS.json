@@ -2,7 +2,7 @@
 	"name": "Hive_DS",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "Hive_avidxhdinsightcpollocksandbox",
+			"referenceName": "Hive_avidxhdisparkcpollocksandbox",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
