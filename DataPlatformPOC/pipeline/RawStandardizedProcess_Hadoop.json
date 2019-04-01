@@ -31,7 +31,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Hive_DS",
+						"referenceName": "Hive_Hadoop_DS",
 						"type": "DatasetReference",
 						"parameters": {
 							"ObjectName": {
