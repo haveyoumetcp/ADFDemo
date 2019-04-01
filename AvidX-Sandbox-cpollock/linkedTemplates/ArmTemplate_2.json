@@ -5,13 +5,278 @@
 		"factoryName": {
 			"type": "string",
 			"metadata": "Data Factory Name",
-			"defaultValue": "avidx-sandbox-cpollock"
+			"defaultValue": "AvidX-Sandbox-cpollock"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSQL_to_ADLS_Gen2_orc')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderQuery": {
+									"value": "SELECT *, SYSUTCDATETIME() AS CurrentDateTime FROM @{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}.@{pipeline().parameters.ObjectName}",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "AzureBlobFSSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ODS_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"SchemaName": " ",
+									"ObjectName": " "
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen2_orc",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "rawzone/integrations/static/tbatchexportstatus/orc/",
+									"FileName": "tbatchexportstatus01292019extracolumn.orc"
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy_ADLS_Gen1_csv_to_ADLS_Gen2_avro')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureDataLakeStoreSource",
+								"recursive": true
+							},
+							"sink": {
+								"type": "AzureBlobFSSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Gen1_csv",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@pipeline().parameters.Directory",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen2_avro",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@pipeline().parameters.Directory",
+										"type": "Expression"
+									},
+									"FileName": " "
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"Directory": {
+						"type": "String",
+						"defaultValue": "rawzone"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy_ADLS_Gen1_csv_to_ADLS_Gen2_orc')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureDataLakeStoreSource",
+								"recursive": true
+							},
+							"sink": {
+								"type": "AzureBlobFSSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Gen1_csv",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@pipeline().parameters.Directory",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen2_orc",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@pipeline().parameters.Directory",
+										"type": "Expression"
+									},
+									"FileName": " "
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"Directory": {
+						"type": "String",
+						"defaultValue": "rawzone"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy_ADLS_Gen1_to_ADLS_Gen2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureDataLakeStoreSource",
+								"recursive": true
+							},
+							"sink": {
+								"type": "AzureBlobFSSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Gen1",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@pipeline().parameters.Directory",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen2",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "@pipeline().parameters.Directory",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"Directory": {
+						"type": "String",
+						"defaultValue": "rawzone"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Copy_ADLS_Gen2_orc_to_ADLS_Gen2_avro')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -1844,15 +2109,22 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SalesforceOrg1toADLSGen2')]",
+			"name": "[concat(parameters('factoryName'), '/RawStandardizedProcess_Hadoop')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy Data",
+						"name": "Hive query to ADLS",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Wait for Hive scripts to run",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -1863,51 +2135,101 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "SalesforceSource",
-								"query": "SELECT id,username,lastname,firstname,name,companyname,division,department,title,street,city,state,postalcode,country,latitude,longitude,geocodeaccuracy,email,systemmodstamp\nFROM User LIMIT 10",
-								"readBehavior": "queryAll"
+								"type": "HiveSource"
 							},
 							"sink": {
-								"type": "AzureBlobFSSink"
+								"type": "AzureDataLakeStoreSink"
 							},
 							"enableStaging": false
 						},
 						"inputs": [
 							{
-								"referenceName": "SalesforceObject1",
+								"referenceName": "Hive_DS",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"ObjectName": {
+										"value": "@variables('HiveSnapshotViewName')",
+										"type": "Expression"
+									}
+								}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "ADLS_Gen2_avro",
+								"referenceName": "ADLS_Gen1_orc",
 								"type": "DatasetReference",
 								"parameters": {
-									"Directory": "raw/salesforceorg1/user",
+									"Directory": {
+										"value": "rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName}",
+										"type": "Expression"
+									},
 									"FileName": {
-										"value": "user-@{pipeline().RunId}.avro",
+										"value": "@{pipeline().parameters.ObjectName}.orc",
 										"type": "Expression"
 									}
 								}
 							}
 						]
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/tbatchexportstatus_AzureSQLDB_to_ADLS_gen1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
+					},
 					{
-						"name": "Copy Data",
-						"type": "Copy",
+						"name": "Create Hive External Table",
+						"type": "HDInsightHive",
+						"dependsOn": [
+							{
+								"activity": "Hive External Table script to Azure Storage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": {
+								"value": "hiveexternaltablescripts/@{variables('HiveExternalTableScriptName')}",
+								"type": "Expression"
+							},
+							"getDebugInfo": "Always",
+							"scriptLinkedService": {
+								"referenceName": "avidxsacpollockhdinsight",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "avidxhdihadoopcpollocksandbox",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Set HiveSnapshotViewName Variable",
+						"type": "SetVariable",
 						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveSnapshotViewName",
+							"value": {
+								"value": "v_@{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}_@{pipeline().parameters.ObjectName}_snapshot",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Hive External Table script to Azure Storage",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Wait after variables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -1918,84 +2240,324 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "SqlSource"
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DatabaseName",
+											"type": "Expression"
+										}
+									},
+									"HiveTableName": {
+										"type": "String",
+										"value": {
+											"value": "@variables('HiveTableName')",
+											"type": "Expression"
+										}
+									},
+									"ObjectName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.ObjectName",
+											"type": "Expression"
+										}
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SchemaName",
+											"type": "Expression"
+										}
+									},
+									"StorageAccountLocation": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.StorageAccountLocation",
+											"type": "Expression"
+										}
+									},
+									"StoredAsType": {
+										"type": "String",
+										"value": "ORC"
+									}
+								}
 							},
 							"sink": {
-								"type": "AzureDataLakeStoreSink"
+								"type": "BlobSink"
 							},
 							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"columnMappings": {
-									"BatchExportStatusId": "batchexportstatusid",
-									"Name": "name",
-									"DisplayName": "displayname",
-									"IsActive": "isactive"
-								}
-							}
+							"dataIntegrationUnits": 0
 						},
 						"inputs": [
 							{
-								"referenceName": "tbatchexportstatus_azuresqldb_DS",
+								"referenceName": "ETLConfigDB_DS",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "tBatchStatusAVROFile_ADLS_Gen1_DS",
+								"referenceName": "ExternalTableScript_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": {
+										"value": "@variables('HiveExternalTableScriptName')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Wait for Hive scripts to run",
+						"type": "Wait",
+						"dependsOn": [
+							{
+								"activity": "Create Hive External Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Create Hive Snapshot View",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					},
+					{
+						"name": "Create Hive Snapshot View",
+						"type": "HDInsightHive",
+						"dependsOn": [
+							{
+								"activity": "Hive View script to Azure Storage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": {
+								"value": "hivesnapshotviewscripts/@{variables('HiveSnapshotViewScriptName')}",
+								"type": "Expression"
+							},
+							"getDebugInfo": "Always",
+							"scriptLinkedService": {
+								"referenceName": "avidxsacpollockhdinsight",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "avidxhdihadoopcpollocksandbox",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Hive View script to Azure Storage",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Wait after variables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveSnapshotViewScriptSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DatabaseName",
+											"type": "Expression"
+										}
+									},
+									"ObjectName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.ObjectName",
+											"type": "Expression"
+										}
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SchemaName",
+											"type": "Expression"
+										}
+									},
+									"PartitionColumns": {
+										"type": "String",
+										"value": null
+									},
+									"OrderByColumn": {
+										"type": "String",
+										"value": "INPUT__FILE__NAME"
+									}
+								}
+							},
+							"sink": {
+								"type": "BlobSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ETLConfigDB_DS",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
+						],
+						"outputs": [
+							{
+								"referenceName": "HiveSnapshotViewScripts_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"Blob": "hivesnapshotviewscripts",
+									"Path": {
+										"value": "@variables('HiveSnapshotViewScriptName')",
+										"type": "Expression"
+									}
+								}
+							}
 						]
+					},
+					{
+						"name": "Set HiveTableName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveTableName",
+							"value": {
+								"value": "@{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}_@{pipeline().parameters.ObjectName}_snapshot",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Wait after variables",
+						"type": "Wait",
+						"dependsOn": [
+							{
+								"activity": "Set HiveSnapshotViewName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set HiveTableName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set HiveExternalTableScriptName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set HiveSnapshotViewScriptName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					},
+					{
+						"name": "Set HiveExternalTableScriptName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveExternalTableScriptName",
+							"value": {
+								"value": "@toLower(CONCAT(pipeline().parameters.DatabaseName,if(empty(pipeline().parameters.SchemaName),'.hql',CONCAT('/',pipeline().parameters.SchemaName,if(empty(pipeline().parameters.ObjectName),'.hql',CONCAT('/',pipeline().parameters.ObjectName,'.hql'))))))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set HiveSnapshotViewScriptName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveSnapshotViewScriptName",
+							"value": {
+								"value": "@toLower(CONCAT(pipeline().parameters.DatabaseName,if(empty(pipeline().parameters.SchemaName),'.hql',CONCAT('/',pipeline().parameters.SchemaName,if(empty(pipeline().parameters.ObjectName),'.hql',CONCAT('/',pipeline().parameters.ObjectName,'.hql'))))))",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"parameters": {
-					"test_parameter": {
+					"DatabaseName": {
+						"type": "String",
+						"defaultValue": "avidpaytransaction"
+					},
+					"SchemaName": {
+						"type": "String",
+						"defaultValue": "static"
+					},
+					"ObjectName": {
+						"type": "String",
+						"defaultValue": "tpaymenttype"
+					},
+					"StorageAccountLocation": {
+						"type": "String",
+						"defaultValue": "adl://avidxdlssandboxcpollock.azuredatalakestore.net/rawstandardized"
+					}
+				},
+				"variables": {
+					"HiveSnapshotViewName": {
+						"type": "String"
+					},
+					"HiveTableName": {
+						"type": "String"
+					},
+					"HiveExternalTableScriptName": {
+						"type": "String"
+					},
+					"HiveSnapshotViewScriptName": {
 						"type": "String"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TestTrigger1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "tbatchexportstatus_AzureSQLDB_to_ADLS_gen1",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2019-03-01T18:41:00Z",
-						"timeZone": "UTC",
-						"schedule": {
-							"minutes": [
-								0
-							],
-							"hours": [
-								20
-							]
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/tbatchexportstatus_AzureSQLDB_to_ADLS_gen1')]"
-			]
 		}
 	]
 }

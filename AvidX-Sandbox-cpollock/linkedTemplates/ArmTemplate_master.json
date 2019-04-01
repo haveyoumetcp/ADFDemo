@@ -5,7 +5,7 @@
 		"factoryName": {
 			"type": "string",
 			"metadata": "Data Factory Name",
-			"defaultValue": "avidx-sandbox-cpollock"
+			"defaultValue": "AvidX-Sandbox-cpollock"
 		},
 		"ADLS_Gen2_accountKey": {
 			"type": "secureString",
@@ -18,6 +18,14 @@
 		"ETLConfigDB_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ETLConfigDB'"
+		},
+		"HiveMetastore_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'HiveMetastore'"
+		},
+		"Hive_avidxhdihadoopcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdihadoopcpollocksandbox'"
 		},
 		"Hive_avidxhdinsightcpollocksandbox_password": {
 			"type": "secureString",
@@ -38,6 +46,10 @@
 		"SalesforceOrg1_securityToken": {
 			"type": "secureString",
 			"metadata": "Secure string for 'securityToken' of 'SalesforceOrg1'"
+		},
+		"avidxhdihadoopcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'avidxhdihadoopcpollocksandbox'"
 		},
 		"avidxhdisparkcpollocksandbox_password": {
 			"type": "secureString",
@@ -191,6 +203,10 @@
 			"type": "string",
 			"defaultValue": "cpollock-rg"
 		},
+		"Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
 		"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "admin"
@@ -198,6 +214,10 @@
 		"SalesforceOrg1_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "mdpintegrations@avidxchange.com.qasit"
+		},
+		"avidxhdihadoopcpollocksandbox_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
 		},
 		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
 			"type": "string",
@@ -238,6 +258,12 @@
 					},
 					"ETLConfigDB_connectionString": {
 						"value": "[parameters('ETLConfigDB_connectionString')]"
+					},
+					"HiveMetastore_connectionString": {
+						"value": "[parameters('HiveMetastore_connectionString')]"
+					},
+					"Hive_avidxhdihadoopcpollocksandbox_password": {
+						"value": "[parameters('Hive_avidxhdihadoopcpollocksandbox_password')]"
 					},
 					"Hive_avidxhdinsightcpollocksandbox_password": {
 						"value": "[parameters('Hive_avidxhdinsightcpollocksandbox_password')]"
@@ -284,6 +310,9 @@
 					"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
 						"value": "[parameters('AzureDataLakeStore1_properties_typeProperties_resourceGroupName')]"
 					},
+					"Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username": {
+						"value": "[parameters('Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username')]"
+					},
 					"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
 						"value": "[parameters('Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username')]"
 					},
@@ -328,18 +357,6 @@
 					},
 					"ADLS_Gen2_properties_typeProperties_folderPath": {
 						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]"
-					},
-					"ADLS_Gen2_avro_properties_typeProperties_fileName": {
-						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]"
-					},
-					"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
-						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_folderPath')]"
-					},
-					"ADLS_Gen2_orc_properties_typeProperties_fileName": {
-						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_fileName')]"
-					},
-					"ADLS_Gen2_orc_properties_typeProperties_folderPath": {
-						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -359,8 +376,23 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"avidxhdihadoopcpollocksandbox_password": {
+						"value": "[parameters('avidxhdihadoopcpollocksandbox_password')]"
+					},
 					"avidxhdisparkcpollocksandbox_password": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
+					},
+					"ADLS_Gen2_avro_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_folderPath')]"
+					},
+					"ADLS_Gen2_orc_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen2_orc_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_folderPath')]"
 					},
 					"ExternalTableScript_DS_properties_typeProperties_fileName": {
 						"value": "[parameters('ExternalTableScript_DS_properties_typeProperties_fileName')]"
@@ -392,6 +424,9 @@
 					"tbatchexportstatusAVRO_gen2_properties_typeProperties_folderPath": {
 						"value": "[parameters('tbatchexportstatusAVRO_gen2_properties_typeProperties_folderPath')]"
 					},
+					"avidxhdihadoopcpollocksandbox_properties_typeProperties_userName": {
+						"value": "[parameters('avidxhdihadoopcpollocksandbox_properties_typeProperties_userName')]"
+					},
 					"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_properties_typeProperties_userName')]"
 					}
@@ -419,6 +454,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_2')]"
 			]
 		}
 	]

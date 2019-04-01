@@ -3,7 +3,7 @@
 	"contentVersion": "1.0.0.0",
 	"parameters": {
 		"factoryName": {
-			"value": "avidx-sandbox-cpollock"
+			"value": "AvidX-Sandbox-cpollock"
 		},
 		"ADLS_Gen2_accountKey": {
 			"value": ""
@@ -12,6 +12,12 @@
 			"value": ""
 		},
 		"ETLConfigDB_connectionString": {
+			"value": ""
+		},
+		"HiveMetastore_connectionString": {
+			"value": ""
+		},
+		"Hive_avidxhdihadoopcpollocksandbox_password": {
 			"value": ""
 		},
 		"Hive_avidxhdinsightcpollocksandbox_password": {
@@ -27,6 +33,9 @@
 			"value": ""
 		},
 		"SalesforceOrg1_securityToken": {
+			"value": ""
+		},
+		"avidxhdihadoopcpollocksandbox_password": {
 			"value": ""
 		},
 		"avidxhdisparkcpollocksandbox_password": {
@@ -143,11 +152,17 @@
 		"AzureDataLakeStore1_properties_typeProperties_resourceGroupName": {
 			"value": "cpollock-rg"
 		},
+		"Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username": {
+			"value": "admin"
+		},
 		"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
 			"value": "admin"
 		},
 		"SalesforceOrg1_properties_typeProperties_username": {
 			"value": "mdpintegrations@avidxchange.com.qasit"
+		},
+		"avidxhdihadoopcpollocksandbox_properties_typeProperties_userName": {
+			"value": "admin"
 		},
 		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
 			"value": "admin"

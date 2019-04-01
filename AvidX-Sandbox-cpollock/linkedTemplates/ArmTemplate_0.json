@@ -5,7 +5,7 @@
 		"factoryName": {
 			"type": "string",
 			"metadata": "Data Factory Name",
-			"defaultValue": "avidx-sandbox-cpollock"
+			"defaultValue": "AvidX-Sandbox-cpollock"
 		},
 		"ADLS_Gen2_accountKey": {
 			"type": "secureString",
@@ -18,6 +18,14 @@
 		"ETLConfigDB_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ETLConfigDB'"
+		},
+		"HiveMetastore_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'HiveMetastore'"
+		},
+		"Hive_avidxhdihadoopcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdihadoopcpollocksandbox'"
 		},
 		"Hive_avidxhdinsightcpollocksandbox_password": {
 			"type": "secureString",
@@ -79,6 +87,10 @@
 			"type": "string",
 			"defaultValue": "cpollock-rg"
 		},
+		"Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
 		"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "admin"
@@ -136,22 +148,6 @@
 			"defaultValue": "@dataset().Directory"
 		},
 		"ADLS_Gen2_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().Directory"
-		},
-		"ADLS_Gen2_avro_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@toLower(replace(dataset().FileName,' ',''))"
-		},
-		"ADLS_Gen2_avro_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@toLower(dataset().Directory)"
-		},
-		"ADLS_Gen2_orc_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@replace(dataset().FileName,' ','')"
-		},
-		"ADLS_Gen2_orc_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "@dataset().Directory"
 		}
@@ -231,6 +227,44 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('ETLConfigDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HiveMetastore')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('HiveMetastore_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Hive_avidxhdihadoopcpollocksandbox')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Hive",
+				"typeProperties": {
+					"host": "avidxhdihadoopcpollocksandbox.azurehdinsight.net",
+					"port": 443,
+					"serverType": "HiveServer2",
+					"thriftTransportProtocol": null,
+					"authenticationType": "WindowsAzureHDInsightService",
+					"serviceDiscoveryMode": false,
+					"useNativeQuery": false,
+					"username": "[parameters('Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('Hive_avidxhdihadoopcpollocksandbox_password')]"
+					},
+					"enableSsl": false
 				}
 			},
 			"dependsOn": []
@@ -579,80 +613,6 @@
 				"typeProperties": {
 					"folderPath": {
 						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS_Gen2')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2_avro')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_Gen2",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String"
-					},
-					"FileName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureBlobFSFile",
-				"typeProperties": {
-					"format": {
-						"type": "AvroFormat"
-					},
-					"fileName": {
-						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_fileName')]",
-						"type": "Expression"
-					},
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen2_avro_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS_Gen2')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2_orc')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_Gen2",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String"
-					},
-					"FileName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureBlobFSFile",
-				"typeProperties": {
-					"format": {
-						"type": "OrcFormat"
-					},
-					"fileName": {
-						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_fileName')]",
-						"type": "Expression"
-					},
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen2_orc_properties_typeProperties_folderPath')]",
 						"type": "Expression"
 					}
 				}
