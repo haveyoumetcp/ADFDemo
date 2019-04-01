@@ -2599,11 +2599,11 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"Directory": {
-										"value": "toLower(rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName})",
+										"value": "rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName}",
 										"type": "Expression"
 									},
 									"FileName": {
-										"value": "toLower(@{pipeline().parameters.ObjectName}.orc)",
+										"value": "@{pipeline().parameters.ObjectName}.orc",
 										"type": "Expression"
 									}
 								}
