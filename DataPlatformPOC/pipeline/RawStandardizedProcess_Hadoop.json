@@ -400,12 +400,10 @@
 				"defaultValue": "avidpaytransaction"
 			},
 			"SchemaName": {
-				"type": "String",
-				"defaultValue": "static"
+				"type": "String"
 			},
 			"ObjectName": {
-				"type": "String",
-				"defaultValue": "tpaymenttype"
+				"type": "String"
 			},
 			"StorageAccountLocation": {
 				"type": "String",
