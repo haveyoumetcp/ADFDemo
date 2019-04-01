@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdinsightcpollocksandbox'"
 		},
+		"Hive_avidxhdisparkcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox'"
+		},
 		"ODS_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ODS'"
@@ -215,6 +219,10 @@
 			"type": "string",
 			"defaultValue": "admin"
 		},
+		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
 		"SalesforceOrg1_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "mdpintegrations@avidxchange.com.qasit"
@@ -272,6 +280,9 @@
 					"Hive_avidxhdinsightcpollocksandbox_password": {
 						"value": "[parameters('Hive_avidxhdinsightcpollocksandbox_password')]"
 					},
+					"Hive_avidxhdisparkcpollocksandbox_password": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_password')]"
+					},
 					"ODS_connectionString": {
 						"value": "[parameters('ODS_connectionString')]"
 					},
@@ -323,6 +334,9 @@
 					"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
 						"value": "[parameters('Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username')]"
 					},
+					"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username')]"
+					},
 					"SalesforceOrg1_properties_typeProperties_username": {
 						"value": "[parameters('SalesforceOrg1_properties_typeProperties_username')]"
 					},
@@ -355,12 +369,6 @@
 					},
 					"ADLS_Gen1_csv_properties_typeProperties_folderPath": {
 						"value": "[parameters('ADLS_Gen1_csv_properties_typeProperties_folderPath')]"
-					},
-					"ADLS_Gen1_orc_properties_typeProperties_fileName": {
-						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_fileName')]"
-					},
-					"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
-						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -385,6 +393,12 @@
 					},
 					"avidxhdisparkcpollocksandbox_password": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
+					},
+					"ADLS_Gen1_orc_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_fileName')]"
+					},
+					"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_folderPath')]"
 					},
 					"ADLS_Gen2_properties_typeProperties_folderPath": {
 						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]"

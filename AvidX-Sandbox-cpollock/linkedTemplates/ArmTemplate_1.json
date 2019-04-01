@@ -15,6 +15,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox'"
 		},
+		"ADLS_Gen1_orc_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@replace(dataset().FileName,' ','')"
+		},
+		"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
 		"ADLS_Gen2_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "@dataset().Directory"
@@ -88,6 +96,41 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_orc')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStore1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String"
+					},
+					"FileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "OrcFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -309,7 +352,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Hive_avidxhdinsightcpollocksandbox",
+					"referenceName": "Hive_avidxhdisparkcpollocksandbox",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -619,87 +662,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSQLDB_to_AzureSQLDB')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy Data",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlSource"
-							},
-							"sink": {
-								"type": "SqlSink",
-								"writeBatchSize": 25000,
-								"preCopyScript": {
-									"value": "DROP TABLE IF EXISTS [@{pipeline().parameters.SchemaName}].[@{pipeline().parameters.TableName}]",
-									"type": "Expression"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "ODS_DS",
-								"type": "DatasetReference",
-								"parameters": {
-									"SchemaName": {
-										"value": "@pipeline().parameters.SchemaName",
-										"type": "Expression"
-									},
-									"ObjectName": {
-										"value": "@pipeline().parameters.TableName",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzidPayTransaction_AzureSQLDB_DS",
-								"type": "DatasetReference",
-								"parameters": {
-									"SchemaName": {
-										"value": "@pipeline().parameters.SchemaName",
-										"type": "Expression"
-									},
-									"ObjectName": {
-										"value": "@pipeline().parameters.TableName",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"parameters": {
-					"SchemaName": {
-						"type": "String"
-					},
-					"TableName": {
-						"type": "String"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ODS_DS')]",
-				"[concat(variables('factoryId'), '/datasets/AzidPayTransaction_AzureSQLDB_DS')]"
-			]
 		}
 	]
 }

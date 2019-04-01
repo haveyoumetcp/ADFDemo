@@ -23,6 +23,9 @@
 		"Hive_avidxhdinsightcpollocksandbox_password": {
 			"value": ""
 		},
+		"Hive_avidxhdisparkcpollocksandbox_password": {
+			"value": ""
+		},
 		"ODS_connectionString": {
 			"value": ""
 		},
@@ -159,6 +162,9 @@
 			"value": "admin"
 		},
 		"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
+			"value": "admin"
+		},
+		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
 			"value": "admin"
 		},
 		"SalesforceOrg1_properties_typeProperties_username": {

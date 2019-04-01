@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdinsightcpollocksandbox'"
 		},
+		"Hive_avidxhdisparkcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox'"
+		},
 		"ODS_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ODS'"
@@ -212,6 +216,10 @@
 			"defaultValue": "admin"
 		},
 		"Hive_avidxhdinsightcpollocksandbox_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "admin"
 		},
@@ -3602,7 +3610,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Hive_avidxhdinsightcpollocksandbox",
+					"referenceName": "Hive_avidxhdisparkcpollocksandbox",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -3620,7 +3628,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/Hive_avidxhdinsightcpollocksandbox')]"
+				"[concat(variables('factoryId'), '/linkedServices/Hive_avidxhdisparkcpollocksandbox')]"
 			]
 		},
 		{
@@ -4026,6 +4034,31 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Hive_avidxhdisparkcpollocksandbox')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "Hive",
+				"typeProperties": {
+					"host": "avidxhdisparkcpollocksandbox.azurehdinsight.net",
+					"port": 443,
+					"serverType": "HiveServer2",
+					"thriftTransportProtocol": null,
+					"authenticationType": "WindowsAzureHDInsightService",
+					"serviceDiscoveryMode": false,
+					"useNativeQuery": false,
+					"username": "[parameters('Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_password')]"
+					},
+					"enableSsl": false
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ODS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -4137,6 +4170,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/avidxsasandboxcpollock')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('avidxsasandboxcpollock_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TestTrigger1')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
@@ -4173,19 +4219,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/tbatchexportstatus_AzureSQLDB_to_ADLS_gen1')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/avidxsasandboxcpollock')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('avidxsasandboxcpollock_connectionString')]"
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }
