@@ -47,7 +47,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Directory": {
-								"value": "toLower(rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName})",
+								"value": "toLower('rawstandardized/'@{pipeline().parameters.DatabaseName}'/'@{pipeline().parameters.SchemaName}'/'@{pipeline().parameters.ObjectName})",
 								"type": "Expression"
 							},
 							"FileName": {
