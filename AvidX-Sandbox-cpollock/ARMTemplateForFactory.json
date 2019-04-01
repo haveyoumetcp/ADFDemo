@@ -2583,7 +2583,7 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "Hive_DS",
+								"referenceName": "Hive_Hadoop_DS",
 								"type": "DatasetReference",
 								"parameters": {
 									"ObjectName": {
@@ -2995,7 +2995,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Hive_DS')]",
+				"[concat(variables('factoryId'), '/datasets/Hive_Hadoop_DS')]",
 				"[concat(variables('factoryId'), '/datasets/ADLS_Gen1_orc')]",
 				"[concat(variables('factoryId'), '/linkedServices/avidxsasandboxcpollock')]",
 				"[concat(variables('factoryId'), '/linkedServices/avidxhdihadoopcpollocksandbox')]",
