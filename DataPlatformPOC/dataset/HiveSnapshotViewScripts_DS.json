@@ -2,7 +2,7 @@
 	"name": "HiveSnapshotViewScripts_DS",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "avidxsacpollockhdinsight",
+			"referenceName": "avidxsasandboxcpollock",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
