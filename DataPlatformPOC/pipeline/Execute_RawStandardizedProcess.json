@@ -15,7 +15,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlSource",
-						"sqlReaderQuery": "SELECT\t[ETLControlID],\n\t\t[DatabaseName],\n\t\t[SchemaName],\n\t\t[TableName]\nFROM [dbo].[GetETLControlRecords]()\nWHERE [IsObjectActive] = 1\n\tAND IsDataLakeRawStandardized = 1"
+						"sqlReaderQuery": {
+							"value": "SELECT * FROM [dbo].[GetETLControlRecords_RawStandardized]('@{pipeline().parameters.DatabaseName}', '@{pipeline().parameters.SchemaName}', '@{pipeline().parameters.ObjectName}')",
+							"type": "Expression"
+						}
 					},
 					"dataset": {
 						"referenceName": "ETLConfigDB_DS",
@@ -40,6 +43,7 @@
 						"value": "@activity('GetETLControlRecords').output.value",
 						"type": "Expression"
 					},
+					"isSequential": false,
 					"activities": [
 						{
 							"name": "Execute_RawStandardizedProcess",
