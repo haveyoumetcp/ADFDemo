@@ -1,0 +1,116 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "AvidX-Sandbox-cpollock"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Execute_RawStandardizedProcess')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetETLControlRecords",
+						"type": "Lookup",
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderQuery": {
+									"value": "SELECT * FROM [dbo].[GetETLControlRecords_RawStandardized]('@{pipeline().parameters.DatabaseName}', '@{pipeline().parameters.SchemaName}', '@{pipeline().parameters.ObjectName}')",
+									"type": "Expression"
+								}
+							},
+							"dataset": {
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference"
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE_RawStandardized",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetETLControlRecords",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetETLControlRecords').output.value",
+								"type": "Expression"
+							},
+							"isSequential": false,
+							"activities": [
+								{
+									"name": "Execute_RawStandardizedProcess",
+									"type": "ExecutePipeline",
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "RawStandardizedProcess",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"DatabaseName": {
+												"value": "@item().DatabaseName",
+												"type": "Expression"
+											},
+											"SchemaName": {
+												"value": "@item().SchemaName",
+												"type": "Expression"
+											},
+											"ObjectName": {
+												"value": "@item().TableName",
+												"type": "Expression"
+											},
+											"StorageAccountLocation": {
+												"value": "@pipeline().parameters.StorageAccountLocation",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String",
+						"defaultValue": "avidpaytransaction"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					},
+					"StorageAccountLocation": {
+						"type": "String",
+						"defaultValue": "adl://avidxdlssandboxcpollock.azuredatalakestore.net/rawstandardized"
+					}
+				}
+			}
+		}
+	]
+}
