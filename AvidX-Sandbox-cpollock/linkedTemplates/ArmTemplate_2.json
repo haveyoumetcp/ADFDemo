@@ -1814,7 +1814,7 @@
 							},
 							"getDebugInfo": "Always",
 							"scriptLinkedService": {
-								"referenceName": "avidxsacpollockhdinsight",
+								"referenceName": "avidxsasandboxcpollock",
 								"type": "LinkedServiceReference"
 							}
 						},
@@ -1975,7 +1975,7 @@
 							},
 							"getDebugInfo": "Always",
 							"scriptLinkedService": {
-								"referenceName": "avidxsacpollockhdinsight",
+								"referenceName": "avidxsasandboxcpollock",
 								"type": "LinkedServiceReference"
 							}
 						},

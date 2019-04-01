@@ -2177,7 +2177,7 @@
 							},
 							"getDebugInfo": "Always",
 							"scriptLinkedService": {
-								"referenceName": "avidxsacpollockhdinsight",
+								"referenceName": "avidxsasandboxcpollock",
 								"type": "LinkedServiceReference"
 							}
 						},
@@ -2338,7 +2338,7 @@
 							},
 							"getDebugInfo": "Always",
 							"scriptLinkedService": {
-								"referenceName": "avidxsacpollockhdinsight",
+								"referenceName": "avidxsasandboxcpollock",
 								"type": "LinkedServiceReference"
 							}
 						},
@@ -2540,7 +2540,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Hive_DS')]",
 				"[concat(variables('factoryId'), '/datasets/ADLS_Gen1_orc')]",
-				"[concat(variables('factoryId'), '/linkedServices/avidxsacpollockhdinsight')]",
+				"[concat(variables('factoryId'), '/linkedServices/avidxsasandboxcpollock')]",
 				"[concat(variables('factoryId'), '/linkedServices/avidxhdisparkcpollocksandbox')]",
 				"[concat(variables('factoryId'), '/datasets/ETLConfigDB_DS')]",
 				"[concat(variables('factoryId'), '/datasets/ExternalTableScript_DS')]",
