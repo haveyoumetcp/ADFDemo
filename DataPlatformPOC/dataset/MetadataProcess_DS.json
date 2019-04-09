@@ -1,0 +1,10 @@
+{
+	"name": "MetadataProcess_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MetadataProcess",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable"
+	}
+}
