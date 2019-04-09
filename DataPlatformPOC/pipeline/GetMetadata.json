@@ -238,10 +238,7 @@
 						"storedProcedureParameters": {
 							"SourceType": {
 								"type": "String",
-								"value": {
-									"value": "SQLServer",
-									"type": "Expression"
-								}
+								"value": null
 							}
 						}
 					},
