@@ -15,7 +15,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[uspCreateMetadataLoad]"
+						"sqlReaderStoredProcedureName": "[meta].[uspCreateMetadataLoad]"
 					},
 					"dataset": {
 						"referenceName": "MetadataProcess_DS",
@@ -46,7 +46,7 @@
 					"secureInput": false
 				},
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[uspProcessMetadataLoad]",
+					"storedProcedureName": "[meta].[uspProcessMetadataLoad]",
 					"storedProcedureParameters": {
 						"MetadataLoadID": {
 							"value": {
@@ -143,7 +143,7 @@
 												"referenceName": "MetadataProcess_DS",
 												"type": "DatasetReference",
 												"parameters": {
-													"SchemaName": "dbo",
+													"SchemaName": "meta",
 													"TableName": "MetadataLoadSQLServer_stg"
 												}
 											}
@@ -201,7 +201,7 @@
 												"referenceName": "MetadataProcess_DS",
 												"type": "DatasetReference",
 												"parameters": {
-													"SchemaName": "dbo",
+													"SchemaName": "meta",
 													"TableName": "MetadataLoadSQLServer_stg"
 												}
 											}
@@ -234,7 +234,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[uspGetMetadataSources]",
+						"sqlReaderStoredProcedureName": "[meta].[uspGetMetadataSources]",
 						"storedProcedureParameters": {
 							"SourceType": {
 								"type": "String",
@@ -275,7 +275,7 @@
 					"secureInput": false
 				},
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[uspTruncateMetadataLoadStageTables]"
+					"storedProcedureName": "[meta].[uspTruncateMetadataLoadStageTables]"
 				},
 				"linkedServiceName": {
 					"referenceName": "MetadataProcess",
@@ -407,7 +407,7 @@
 												"referenceName": "MetadataProcess_DS",
 												"type": "DatasetReference",
 												"parameters": {
-													"SchemaName": "dbo",
+													"SchemaName": "meta",
 													"TableName": "MetadataLoadSQLServer_stg"
 												}
 											}
