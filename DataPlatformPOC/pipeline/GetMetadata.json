@@ -461,6 +461,28 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "Filter_Salesforce",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "TruncateMetadataLoadStageTables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetMetadataSources').output?.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().SourceType, 'Salesforce')",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"variables": {
