@@ -5,6 +5,14 @@
 			{
 				"name": "CreateMetadataLoad",
 				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "GetMetadataSources",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -216,14 +224,6 @@
 			{
 				"name": "GetMetadataSources",
 				"type": "Lookup",
-				"dependsOn": [
-					{
-						"activity": "TruncateMetadataLoadStageTables",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -445,7 +445,7 @@
 				"type": "Filter",
 				"dependsOn": [
 					{
-						"activity": "GetMetadataSources",
+						"activity": "TruncateMetadataLoadStageTables",
 						"dependencyConditions": [
 							"Succeeded"
 						]
