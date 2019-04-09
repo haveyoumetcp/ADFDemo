@@ -1,0 +1,33 @@
+{
+	"name": "OnPremDB_SQLAuth_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "OnPremDB_SQLAuth",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ConnectionStringAKVSecret": {
+					"value": "@dataset().ConnectionStringAKVSecret",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"ConnectionStringAKVSecret": {
+				"type": "String"
+			},
+			"SchemaName": {
+				"type": "String"
+			},
+			"ObjectName": {
+				"type": "String"
+			}
+		},
+		"type": "SqlServerTable",
+		"typeProperties": {
+			"tableName": {
+				"value": "[@{dataset().SchemaName}].[@{dataset().ObjectName}]",
+				"type": "Expression"
+			}
+		}
+	}
+}
