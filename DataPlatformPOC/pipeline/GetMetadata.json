@@ -1,0 +1,451 @@
+{
+	"name": "GetMetadata",
+	"properties": {
+		"activities": [
+			{
+				"name": "CreateMetadataLoad",
+				"type": "Lookup",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[uspCreateMetadataLoad]"
+					},
+					"dataset": {
+						"referenceName": "MetadataProcess_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"SchemaName": " ",
+							"TableName": " "
+						}
+					}
+				}
+			},
+			{
+				"name": "ProcessMetadataLoad",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Wait",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[uspProcessMetadataLoad]",
+					"storedProcedureParameters": {
+						"MetadataLoadID": {
+							"value": {
+								"value": "@activity('CreateMetadataLoad').output.firstRow.MetadataLoadID",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "MetadataProcess",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "FE_GetMetadata_SQLServer_IsAzureSQL_false",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Filter_SQLServer_IsAzureSQLDB_false",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter_SQLServer_IsAzureSQLDB_false').output?.value",
+						"type": "Expression"
+					},
+					"batchCount": 50,
+					"activities": [
+						{
+							"name": "Is_SQLServer_SQLAuth",
+							"type": "IfCondition",
+							"typeProperties": {
+								"expression": {
+									"value": "@bool(coalesce(item().IsSQLAuthentication,'false'))",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "GetMetadata_SQLServer",
+										"type": "Copy",
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"typeProperties": {
+											"source": {
+												"type": "SqlSource",
+												"sqlReaderQuery": {
+													"value": "@variables('MetadataSQLStmt')",
+													"type": "Expression"
+												}
+											},
+											"sink": {
+												"type": "SqlSink",
+												"writeBatchSize": 10000
+											},
+											"enableStaging": false,
+											"dataIntegrationUnits": 0
+										},
+										"inputs": [
+											{
+												"referenceName": "OnPremDB_DS",
+												"type": "DatasetReference",
+												"parameters": {
+													"ServerName": {
+														"value": "@item().ServerName",
+														"type": "Expression"
+													},
+													"DatabaseName": {
+														"value": "@item().DatabaseName",
+														"type": "Expression"
+													},
+													"SchemaName": {
+														"value": "string('')",
+														"type": "Expression"
+													},
+													"ObjectName": {
+														"value": "string('')",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "MetadataProcess_DS",
+												"type": "DatasetReference",
+												"parameters": {
+													"SchemaName": "dbo",
+													"TableName": "MetadataLoadSQLServer_stg"
+												}
+											}
+										]
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Copy Data from SQL Auth Source",
+										"type": "Copy",
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"typeProperties": {
+											"source": {
+												"type": "SqlSource",
+												"sqlReaderQuery": {
+													"value": "@variables('MetadataSQLStmt')",
+													"type": "Expression"
+												}
+											},
+											"sink": {
+												"type": "SqlSink",
+												"writeBatchSize": 10000
+											},
+											"enableStaging": false,
+											"dataIntegrationUnits": 0
+										},
+										"inputs": [
+											{
+												"referenceName": "OnPremDB_SQLAuth_DS",
+												"type": "DatasetReference",
+												"parameters": {
+													"ConnectionStringAKVSecret": {
+														"value": "@item().ConnectionStringSecret",
+														"type": "Expression"
+													},
+													"SchemaName": {
+														"value": "string('')",
+														"type": "Expression"
+													},
+													"ObjectName": {
+														"value": "string('')",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "MetadataProcess_DS",
+												"type": "DatasetReference",
+												"parameters": {
+													"SchemaName": "dbo",
+													"TableName": "MetadataLoadSQLServer_stg"
+												}
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "GetMetadataSources_SQLServer",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "TruncateMetadataLoadStageTables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[uspGetMetadataSources]",
+						"storedProcedureParameters": {
+							"SourceType": {
+								"type": "String",
+								"value": {
+									"value": "SQLServer",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"dataset": {
+						"referenceName": "MetadataProcess_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"SchemaName": " ",
+							"TableName": " "
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "TruncateMetadataLoadStageTables",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "CreateMetadataLoad",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[uspTruncateMetadataLoadStageTables]"
+				},
+				"linkedServiceName": {
+					"referenceName": "MetadataProcess",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Filter_SQLServer_IsAzureSQLDB_false",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetMetadataSources_SQLServer",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetMetadataSources_SQLServer').output?.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(coalesce(item().IsAzureSQLDB, false), false)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Filter_SQLServer_IsAzureSQLDB_true",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetMetadataSources_SQLServer",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetMetadataSources_SQLServer').output?.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(coalesce(item().IsAzureSQLDB,'false'), true)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "FE_GetMetadata_SQLServer_IsAzureSQL_true",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Filter_SQLServer_IsAzureSQLDB_true",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter_SQLServer_IsAzureSQLDB_true').output?.value",
+						"type": "Expression"
+					},
+					"batchCount": 50,
+					"activities": [
+						{
+							"name": "SQLServer_AzureSQLDB",
+							"type": "IfCondition",
+							"typeProperties": {
+								"expression": {
+									"value": "@bool(coalesce(item().IsSQLAuthentication,'false'))",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Copy Metadata from AzureSQLDB",
+										"type": "Copy",
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"typeProperties": {
+											"source": {
+												"type": "SqlSource",
+												"sqlReaderQuery": {
+													"value": "@variables('MetadataSQLStmt')",
+													"type": "Expression"
+												}
+											},
+											"sink": {
+												"type": "SqlSink",
+												"writeBatchSize": 10000
+											},
+											"enableStaging": false,
+											"dataIntegrationUnits": 0
+										},
+										"inputs": [
+											{
+												"referenceName": "AzureSQLDB_DS",
+												"type": "DatasetReference",
+												"parameters": {
+													"ServerName": {
+														"value": "@item().ServerName",
+														"type": "Expression"
+													},
+													"DatabaseName": {
+														"value": "@item().DatabaseName",
+														"type": "Expression"
+													},
+													"SchemaName": {
+														"value": "string('')",
+														"type": "Expression"
+													},
+													"ObjectName": {
+														"value": "string('')",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "MetadataProcess_DS",
+												"type": "DatasetReference",
+												"parameters": {
+													"SchemaName": "dbo",
+													"TableName": "MetadataLoadSQLServer_stg"
+												}
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Wait",
+				"type": "Wait",
+				"dependsOn": [
+					{
+						"activity": "FE_GetMetadata_SQLServer_IsAzureSQL_false",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "FE_GetMetadata_SQLServer_IsAzureSQL_true",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			}
+		],
+		"variables": {
+			"MetadataSQLStmt": {
+				"type": "String",
+				"defaultValue": "SELECT\tObjectType, \t\tDB_NAME() AS DatabaseName, \t\tSchemaName, \t\tObjectName, \t\tColumnName, \t\tColumnAttributeName, \t\tColumnAttributeValue FROM ( \tSELECT\tobj.ObjectType, \t\t\ts.name AS SchemaName, \t\t\tobj.name AS ObjectName, \t\t\tc.name AS ColumnName, \t\t\tCONVERT(VARCHAR(255), c.column_id) AS column_id, \t\t\tCONVERT(VARCHAR(255), ty.name) AS data_type, \t\t\tCONVERT(VARCHAR(255), c.max_length) AS max_length, \t\t\tCONVERT(VARCHAR(255), c.precision) AS precision, \t\t\tCONVERT(VARCHAR(255), c.scale) AS scale, \t\t\tCONVERT(VARCHAR(255), c.collation_name) AS collation_name, \t\t\tCONVERT(VARCHAR(255), c.is_nullable) AS is_nullable, \t\t\tCONVERT(VARCHAR(255), c.is_identity) AS is_identity, \t\t\tCONVERT(VARCHAR(255), c.is_computed) AS is_computed, \t\t\tCONVERT(VARCHAR(255), ic.key_ordinal) AS pk_column_ordinal FROM (\tSELECT t.schema_id, t.object_id, t.name, t.type_desc AS ObjectType \t\tFROM sys.tables AS t \t\tWHERE (t.is_ms_shipped = 0 OR t.name LIKE '%_CT') \t\tUNION \t\tSELECT v.schema_id, v.object_id, v.name, v.type_desc AS ObjectType \t\tFROM sys.views AS v \t\tWHERE v.is_ms_shipped = 0 \t\t) AS obj \tINNER JOIN sys.schemas AS s \t\tON s.schema_id = obj.schema_id \tINNER JOIN sys.columns AS c \t\tON c.object_id = obj.object_id \tINNER JOIN sys.types AS ty \t\tON ty.user_type_id = c.user_type_id \tLEFT OUTER JOIN sys.indexes AS i \t\tON i.object_id = obj.object_id \t\t\tAND i.is_primary_key = 1 \tLEFT OUTER JOIN sys.index_columns AS ic \t\tON ic.object_id = i.object_id \t\t\tAND ic.index_id = i.index_id \t\t\tAND ic.column_id = c.column_id \t) AS objs UNPIVOT ( \tColumnAttributeValue \tFOR ColumnAttributeName IN (column_id, data_type, max_length, precision, scale, collation_name, is_nullable, is_identity, is_computed, pk_column_ordinal) ) AS unpiv ORDER BY unpiv.ObjectType, unpiv.SchemaName, unpiv.ObjectName, unpiv.ColumnName, unpiv.ColumnAttributeName"
+			}
+		}
+	}
+}

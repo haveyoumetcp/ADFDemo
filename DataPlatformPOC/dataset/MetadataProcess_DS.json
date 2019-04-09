@@ -5,6 +5,20 @@
 			"referenceName": "MetadataProcess",
 			"type": "LinkedServiceReference"
 		},
-		"type": "AzureSqlTable"
+		"parameters": {
+			"SchemaName": {
+				"type": "String"
+			},
+			"TableName": {
+				"type": "String"
+			}
+		},
+		"type": "AzureSqlTable",
+		"typeProperties": {
+			"tableName": {
+				"value": "[@{dataset().SchemaName}].[@{dataset().TableName}]",
+				"type": "Expression"
+			}
+		}
 	}
 }
