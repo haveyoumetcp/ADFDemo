@@ -1,0 +1,12 @@
+{
+	"name": "AvidOnPremIR",
+	"properties": {
+		"type": "SelfHosted",
+		"typeProperties": {
+			"linkedInfo": {
+				"resourceId": "/subscriptions/fb7f642a-16cf-48a7-8161-58002441290d/resourcegroups/AvidX-Dv-Edw-RG/providers/Microsoft.DataFactory/factories/AvidX-Dv-Edw-Integrations02-DF/integrationruntimes/AvidOnPremIR",
+				"authorizationType": "Rbac"
+			}
+		}
+	}
+}
