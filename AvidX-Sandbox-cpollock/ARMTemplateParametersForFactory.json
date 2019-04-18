@@ -11,6 +11,12 @@
 		"AvidPayTransaction_AzureSQLDB_connectionString": {
 			"value": ""
 		},
+		"AzureSQLDB_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"value": ""
+		},
 		"ETLConfigDB_connectionString": {
 			"value": ""
 		},
@@ -20,13 +26,22 @@
 		"Hive_avidxhdihadoopcpollocksandbox_password": {
 			"value": ""
 		},
-		"Hive_avidxhdisparkcpollocksandbox_password": {
+		"MetadataProcess_connectionString": {
 			"value": ""
 		},
 		"ODS_connectionString": {
 			"value": ""
 		},
 		"ODS1_connectionString": {
+			"value": ""
+		},
+		"OnPremDB_connectionString": {
+			"value": ""
+		},
+		"OnPremDB_password": {
+			"value": ""
+		},
+		"OnPremDB_SQLAuth_connectionString": {
 			"value": ""
 		},
 		"SalesforceOrg1_password": {
@@ -45,6 +60,15 @@
 			"value": ""
 		},
 		"avidxsasandboxcpollock_connectionString": {
+			"value": ""
+		},
+		"Hive_avidxhdisparkcpollocksandbox_password": {
+			"value": ""
+		},
+		"avidxhdisparkcpollocksandbox2_password": {
+			"value": ""
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_password": {
 			"value": ""
 		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {
@@ -158,8 +182,8 @@
 		"Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username": {
 			"value": "admin"
 		},
-		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
-			"value": "admin"
+		"OnPremDB_properties_typeProperties_userName": {
+			"value": "AVIDXCHANGE\\cpollock"
 		},
 		"SalesforceOrg1_properties_typeProperties_username": {
 			"value": "mdpintegrations@avidxchange.com.qasit"
@@ -168,6 +192,15 @@
 			"value": "admin"
 		},
 		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
+			"value": "admin"
+		},
+		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+			"value": "admin"
+		},
+		"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
+			"value": "admin"
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
 			"value": "admin"
 		}
 	}

@@ -15,6 +15,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AvidPayTransaction_AzureSQLDB'"
 		},
+		"AzureSQLDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSQLDB'"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		},
 		"ETLConfigDB_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ETLConfigDB'"
@@ -27,9 +35,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdihadoopcpollocksandbox'"
 		},
-		"Hive_avidxhdisparkcpollocksandbox_password": {
+		"MetadataProcess_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox'"
+			"metadata": "Secure string for 'connectionString' of 'MetadataProcess'"
 		},
 		"ODS_connectionString": {
 			"type": "secureString",
@@ -38,6 +46,18 @@
 		"ODS1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ODS1'"
+		},
+		"OnPremDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'OnPremDB'"
+		},
+		"OnPremDB_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'OnPremDB'"
+		},
+		"OnPremDB_SQLAuth_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'OnPremDB_SQLAuth'"
 		},
 		"SalesforceOrg1_password": {
 			"type": "secureString",
@@ -62,6 +82,18 @@
 		"avidxsasandboxcpollock_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsasandboxcpollock'"
+		},
+		"Hive_avidxhdisparkcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox'"
+		},
+		"avidxhdisparkcpollocksandbox2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox2'"
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox2'"
 		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {
 			"type": "string",
@@ -211,9 +243,9 @@
 			"type": "string",
 			"defaultValue": "admin"
 		},
-		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+		"OnPremDB_properties_typeProperties_userName": {
 			"type": "string",
-			"defaultValue": "admin"
+			"defaultValue": "AVIDXCHANGE\\cpollock"
 		},
 		"SalesforceOrg1_properties_typeProperties_username": {
 			"type": "string",
@@ -224,6 +256,18 @@
 			"defaultValue": "admin"
 		},
 		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "admin"
 		},
@@ -260,6 +304,12 @@
 					"AvidPayTransaction_AzureSQLDB_connectionString": {
 						"value": "[parameters('AvidPayTransaction_AzureSQLDB_connectionString')]"
 					},
+					"AzureSQLDB_connectionString": {
+						"value": "[parameters('AzureSQLDB_connectionString')]"
+					},
+					"AzureSqlDatabase1_connectionString": {
+						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
+					},
 					"ETLConfigDB_connectionString": {
 						"value": "[parameters('ETLConfigDB_connectionString')]"
 					},
@@ -269,14 +319,23 @@
 					"Hive_avidxhdihadoopcpollocksandbox_password": {
 						"value": "[parameters('Hive_avidxhdihadoopcpollocksandbox_password')]"
 					},
-					"Hive_avidxhdisparkcpollocksandbox_password": {
-						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_password')]"
+					"MetadataProcess_connectionString": {
+						"value": "[parameters('MetadataProcess_connectionString')]"
 					},
 					"ODS_connectionString": {
 						"value": "[parameters('ODS_connectionString')]"
 					},
 					"ODS1_connectionString": {
 						"value": "[parameters('ODS1_connectionString')]"
+					},
+					"OnPremDB_connectionString": {
+						"value": "[parameters('OnPremDB_connectionString')]"
+					},
+					"OnPremDB_password": {
+						"value": "[parameters('OnPremDB_password')]"
+					},
+					"OnPremDB_SQLAuth_connectionString": {
+						"value": "[parameters('OnPremDB_SQLAuth_connectionString')]"
 					},
 					"SalesforceOrg1_password": {
 						"value": "[parameters('SalesforceOrg1_password')]"
@@ -289,6 +348,12 @@
 					},
 					"avidxsasandboxcpollock_connectionString": {
 						"value": "[parameters('avidxsasandboxcpollock_connectionString')]"
+					},
+					"Hive_avidxhdisparkcpollocksandbox_password": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_password')]"
+					},
+					"Hive_avidxhdisparkcpollocksandbox2_password": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_password')]"
 					},
 					"ADLS_Gen1_properties_typeProperties_dataLakeStoreUri": {
 						"value": "[parameters('ADLS_Gen1_properties_typeProperties_dataLakeStoreUri')]"
@@ -320,11 +385,35 @@
 					"Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username": {
 						"value": "[parameters('Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username')]"
 					},
-					"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
-						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username')]"
+					"OnPremDB_properties_typeProperties_userName": {
+						"value": "[parameters('OnPremDB_properties_typeProperties_userName')]"
 					},
 					"SalesforceOrg1_properties_typeProperties_username": {
 						"value": "[parameters('SalesforceOrg1_properties_typeProperties_username')]"
+					},
+					"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username')]"
+					},
+					"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"ADLS_Gen1_properties_typeProperties_fileName": {
 						"value": "[parameters('ADLS_Gen1_properties_typeProperties_fileName')]"
@@ -361,30 +450,6 @@
 					},
 					"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
 						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_folderPath')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "ArmTemplate_1",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
-			"properties": {
-				"mode": "incremental",
-				"templateLink": {
-					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
-					"contentVersion": "1.0.0.0"
-				},
-				"parameters": {
-					"factoryName": {
-						"value": "[parameters('factoryName')]"
-					},
-					"avidxhdihadoopcpollocksandbox_password": {
-						"value": "[parameters('avidxhdihadoopcpollocksandbox_password')]"
-					},
-					"avidxhdisparkcpollocksandbox_password": {
-						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
 					},
 					"ADLS_Gen2_properties_typeProperties_folderPath": {
 						"value": "[parameters('ADLS_Gen2_properties_typeProperties_folderPath')]"
@@ -412,6 +477,35 @@
 					},
 					"HiveSnapshotViewScripts_DS_properties_typeProperties_folderPath": {
 						"value": "[parameters('HiveSnapshotViewScripts_DS_properties_typeProperties_folderPath')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"avidxhdihadoopcpollocksandbox_password": {
+						"value": "[parameters('avidxhdihadoopcpollocksandbox_password')]"
+					},
+					"avidxhdisparkcpollocksandbox_password": {
+						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
+					},
+					"avidxhdisparkcpollocksandbox2_password": {
+						"value": "[parameters('avidxhdisparkcpollocksandbox2_password')]"
 					},
 					"SnapshotScript_DS_properties_typeProperties_fileName": {
 						"value": "[parameters('SnapshotScript_DS_properties_typeProperties_fileName')]"
@@ -436,26 +530,9 @@
 					},
 					"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
 						"value": "[parameters('avidxhdisparkcpollocksandbox_properties_typeProperties_userName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_0')]"
-			]
-		},
-		{
-			"name": "ArmTemplate_2",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
-			"properties": {
-				"mode": "incremental",
-				"templateLink": {
-					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
-					"contentVersion": "1.0.0.0"
-				},
-				"parameters": {
-					"factoryName": {
-						"value": "[parameters('factoryName')]"
+					},
+					"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
+						"value": "[parameters('avidxhdisparkcpollocksandbox2_properties_typeProperties_userName')]"
 					}
 				}
 			},
@@ -481,6 +558,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_2')]"
+			]
+		},
+		{
+			"name": "ArmTemplate_4",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_4.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'ArmTemplate_3')]"
 			]
 		}
 	]

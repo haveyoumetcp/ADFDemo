@@ -13,6 +13,2087 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/CreateHiveExternalTableScripts_new')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetObjectList",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 5,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetMetadataObjectsSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DatabaseName",
+											"type": "Expression"
+										}
+									},
+									"IsReturnAllIndividualObjects": {
+										"type": "Boolean",
+										"value": {
+											"value": "@bool(pipeline().parameters.IsCreateInvididualObjectScripts)",
+											"type": "Expression"
+										}
+									},
+									"ObjectName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.ObjectName",
+											"type": "Expression"
+										}
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SchemaName",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE_GetExternalTableScript",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetObjectList",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetObjectList').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 50,
+							"activities": [
+								{
+									"name": "CreateHiveExternalTableScript",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 5,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlSource",
+											"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer_new]')]",
+											"storedProcedureParameters": {
+												"DatabaseName": {
+													"type": "String",
+													"value": {
+														"value": "@item().DatabaseName",
+														"type": "Expression"
+													}
+												},
+												"SchemaName": {
+													"type": "String",
+													"value": {
+														"value": "@item().SchemaName",
+														"type": "Expression"
+													}
+												},
+												"TableName": {
+													"type": "String",
+													"value": {
+														"value": "@item().ObjectName",
+														"type": "Expression"
+													}
+												},
+												"StoredAsType": {
+													"type": "String",
+													"value": {
+														"value": "@pipeline().parameters.StoredAsType",
+														"type": "Expression"
+													}
+												},
+												"StorageAccountLocation": {
+													"type": "String",
+													"value": {
+														"value": "@pipeline().parameters.StorageAccountLocation",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"sink": {
+											"type": "BlobSink"
+										},
+										"enableStaging": false,
+										"dataIntegrationUnits": 0
+									},
+									"inputs": [
+										{
+											"referenceName": "ETLConfigDB_DS",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ExternalTableScript_DS",
+											"type": "DatasetReference",
+											"parameters": {
+												"path": {
+													"value": "@toLower(CONCAT(item().DatabaseName,if(empty(item().SchemaName),'.hql',CONCAT('/',item().SchemaName,if(empty(item().ObjectName),'.hql',CONCAT('/',item().ObjectName,'.hql'))))))",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					},
+					"StorageAccountLocation": {
+						"type": "String",
+						"defaultValue": "abfss://rawzone@avidsadlv2cpollock.dfs.core.windows.net/"
+					},
+					"StoredAsType": {
+						"type": "String",
+						"defaultValue": "ORC"
+					},
+					"IsCreateInvididualObjectScripts": {
+						"type": "Bool",
+						"defaultValue": false
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CreateHiveSnapshotScripts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetObjectList",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 5,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderQuery": {
+									"value": "SELECT DISTINCT ISNULL(FriendlyDatabaseName, DatabaseName) AS DatabaseName, SchemaName, ObjectName\nFROM [dbo].[vwMetadataSQLServer]\nWHERE IsLatestLoad = 1\n\tAND (ISNULL(FriendlyDatabaseName, DatabaseName) = '@{pipeline().parameters.DatabaseName}' OR NULLIF(TRIM('@{pipeline().parameters.DatabaseName}'),'') IS NULL)\n\tAND (SchemaName = '@{pipeline().parameters.SchemaName}' OR NULLIF(TRIM('@{pipeline().parameters.SchemaName}'),'') IS NULL)\n\tAND (ObjectName = '@{pipeline().parameters.ObjectName}' OR NULLIF(TRIM('@{pipeline().parameters.ObjectName}'),'') IS NULL)",
+									"type": "Expression"
+								}
+							},
+							"dataset": {
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE_GetHiveSnapshotScript",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetObjectList",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetObjectList').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 50,
+							"activities": [
+								{
+									"name": "CreateHiveSnapshotScript",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 5,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "SqlSource",
+											"sqlReaderStoredProcedureName": "[concat('[', 'dbo].uspGetHiveSnapshotScriptSQLServer')]",
+											"storedProcedureParameters": {
+												"DatabaseName": {
+													"type": "String",
+													"value": {
+														"value": "@item().DatabaseName",
+														"type": "Expression"
+													}
+												},
+												"SchemaName": {
+													"type": "String",
+													"value": {
+														"value": "@item().SchemaName",
+														"type": "Expression"
+													}
+												},
+												"TableName": {
+													"type": "String",
+													"value": {
+														"value": "@item().ObjectName",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"sink": {
+											"type": "BlobSink"
+										},
+										"enableStaging": false,
+										"dataIntegrationUnits": 0
+									},
+									"inputs": [
+										{
+											"referenceName": "ETLConfigDB_DS",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SnapshotScript_DS",
+											"type": "DatasetReference",
+											"parameters": {
+												"path": {
+													"value": "@toLower(CONCAT(item().DatabaseName,'/',item().SchemaName,'/',item().ObjectName,'.hql'))",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CreateSnapshotFile')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Hive query to ADLS",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "HiveSource",
+								"query": {
+									"value": "SELECT *\nFROM v_@{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}_@{pipeline().parameters.ObjectName}_snapshot;",
+									"type": "Expression"
+								}
+							},
+							"sink": {
+								"type": "AzureDataLakeStoreSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Hive_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"ObjectName": " "
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen1_orc",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName}",
+										"type": "Expression"
+									},
+									"FileName": {
+										"value": "@{pipeline().parameters.ObjectName}.orc",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String",
+						"defaultValue": "avidpaytransaction"
+					},
+					"SchemaName": {
+						"type": "String",
+						"defaultValue": "static"
+					},
+					"ObjectName": {
+						"type": "String",
+						"defaultValue": "tpaymenttype"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Curated')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "HiveSource",
+								"query": "WITH pdtmp AS\n(\nSELECT pd.PaymentID, SUM(pd.InvoiceNet) as Amount \nFROM AvidPayTransaction_trn_tPaymentDetail_snapshot pd\nGROUP BY pd.PaymentID\n)\n\nSELECT\n\ttcbm.CustomerID,\n\ttBank.Name as BankAccount,\n\ttPayment.ONSTnumber as CheckNumber,\n\ttPayment.`Date` as PaymentDate,\n\ttpaytype.Descr as Status,\n\ttPayer.ClientPayerID as EntityID,\n\ttPayee.Name as VendorName,\n\ttPayee.ClientPayeeID as VendorID,\n\tpm.Descr as PaymentMethod,\n\tpd.Amount,\n\ttPayment.LastUpdateTime AS PaymentLastUpdateTime\nFROM AvidPayTransaction_trn_tPayment_snapshot AS tPayment \n\tLEFT OUTER JOIN AvidPayTransaction_trn_tPayee_snapshot AS tPayee ON tPayment.PayeeID = tPayee.PayeeID\n\tLEFT OUTER JOIN AvidPayTransaction_trn_tPayer_snapshot AS tPayer ON tPayer.PayerID = tPayment.PayerID\n\tLEFT OUTER JOIN AvidPayTransaction_pfl_tBank_snapshot AS tBank ON tPayment.BankID = tBank.BankID\n\tLEFT OUTER JOIN AvidPayTransaction_static_tPaymentMethod_snapshot AS pm ON tPayment.PaymentMethodID = pm.PaymentMethodID\n\tLEFT OUTER JOIN AvidPayTransaction_pfl_tUser_snapshot AS tUser ON tUser.UserID = tPayment.UserID\n\tLEFT OUTER JOIN AvidPayTransaction_pfl_tOrganization_snapshot AS org ON org.OrganizationID = tUser.OrganizationID\n\tLEFT OUTER JOIN AvidPayTransaction_pfl_tBuyer_snapshot AS tBuyer ON tBuyer.BuyerID = org.OrganizationID\n\tLEFT OUTER JOIN Ordermanagement_neo_tCustomerBuyerMapping_snapshot AS tcbm ON tcbm.BuyerID = tBuyer.AvidSuiteOrganizationID\n\tLEFT OUTER JOIN AvidPayTransaction_static_tPaymentType_snapshot AS tpaytype ON tpaytype.PaymentTypeID = tPayment.PaymentTypeID\n\tLEFT OUTER JOIN pdtmp AS pd ON pd.PaymentID = tPayment.PaymentID;"
+							},
+							"sink": {
+								"type": "AzureDataLakeStoreSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Hive_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"ObjectName": " "
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen1_orc",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "curated/avidpay_payment_summary",
+									"FileName": "avidpay_payment_summary.orc"
+								}
+							}
+						]
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Curated_Hive_table')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Hive1",
+						"type": "HDInsightHive",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": "hivecuratedscripts/avidpay_payment_summary_table/avidpay_payment_summary_table.hql",
+							"scriptLinkedService": {
+								"referenceName": "avidxsacpollockhdinsight",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "avidxhdisparkcpollocksandbox",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExecuteHiveExternalTableScripts_old')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetObjectList",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 5,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderQuery": {
+									"value": "SELECT DISTINCT ISNULL(FriendlyDatabaseName, DatabaseName) AS DatabaseName, SchemaName, ObjectName\nFROM [dbo].[vwMetadataSQLServer]\nWHERE IsLatestLoad = 1\n\tAND (ISNULL(FriendlyDatabaseName, DatabaseName) = '@{pipeline().parameters.DatabaseName}' OR NULLIF(TRIM('@{pipeline().parameters.DatabaseName}'),'') IS NULL)\n\tAND (SchemaName = '@{pipeline().parameters.SchemaName}' OR NULLIF(TRIM('@{pipeline().parameters.SchemaName}'),'') IS NULL)\n\tAND (ObjectName = '@{pipeline().parameters.ObjectName}' OR NULLIF(TRIM('@{pipeline().parameters.ObjectName}'),'') IS NULL)",
+									"type": "Expression"
+								}
+							},
+							"dataset": {
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE_ExecuteHiveExternalTableScripts",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetObjectList",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetObjectList').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 50,
+							"activities": [
+								{
+									"name": "ExecuteHiveExternalTableScript",
+									"type": "HDInsightHive",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 5,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"scriptPath": {
+											"value": "@toLower(CONCAT('hiveexternaltablescripts/',item().DatabaseName,'/',item().SchemaName,'/',item().ObjectName,'.hql'))",
+											"type": "Expression"
+										},
+										"scriptLinkedService": {
+											"referenceName": "avidxsacpollockhdinsight",
+											"type": "LinkedServiceReference"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "avidxhdisparkcpollocksandbox",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExecuteHiveExternalTableScripts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetObjectList",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 5,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetMetadataObjectsSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DatabaseName",
+											"type": "Expression"
+										}
+									},
+									"IsReturnAllIndividualObjects": {
+										"type": "Boolean",
+										"value": {
+											"value": "@bool(pipeline().parameters.IsCreateInvididualObjectScripts)",
+											"type": "Expression"
+										}
+									},
+									"ObjectName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.ObjectName",
+											"type": "Expression"
+										}
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SchemaName",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE_ExecuteHiveExternalTableScripts",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetObjectList",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetObjectList').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 50,
+							"activities": [
+								{
+									"name": "ExecuteHiveExternalTableScript",
+									"type": "HDInsightHive",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"scriptPath": {
+											"value": "@toLower(CONCAT('hiveexternaltablescripts/',item().DatabaseName,if(empty(item().SchemaName),'.hql',CONCAT('/',item().SchemaName,if(empty(item().ObjectName),'.hql',CONCAT('/',item().ObjectName,'.hql'))))))",
+											"type": "Expression"
+										},
+										"getDebugInfo": "Failure",
+										"scriptLinkedService": {
+											"referenceName": "avidxsacpollockhdinsight",
+											"type": "LinkedServiceReference"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "avidxhdisparkcpollocksandbox",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					},
+					"IsCreateInvididualObjectScripts": {
+						"type": "Bool",
+						"defaultValue": false
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExecuteHiveSnapshotScripts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetObjectList",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 5,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderQuery": {
+									"value": "SELECT DISTINCT ISNULL(FriendlyDatabaseName, DatabaseName) AS DatabaseName, SchemaName, ObjectName\nFROM [dbo].[vwMetadataSQLServer]\nWHERE IsLatestLoad = 1\n\tAND (ISNULL(FriendlyDatabaseName, DatabaseName) = '@{pipeline().parameters.DatabaseName}' OR NULLIF(TRIM('@{pipeline().parameters.DatabaseName}'),'') IS NULL)\n\tAND (SchemaName = '@{pipeline().parameters.SchemaName}' OR NULLIF(TRIM('@{pipeline().parameters.SchemaName}'),'') IS NULL)\n\tAND (ObjectName = '@{pipeline().parameters.ObjectName}' OR NULLIF(TRIM('@{pipeline().parameters.ObjectName}'),'') IS NULL)",
+									"type": "Expression"
+								}
+							},
+							"dataset": {
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE_ExecuteHiveSnapshotScripts",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetObjectList",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetObjectList').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 10,
+							"activities": [
+								{
+									"name": "ExecuteHiveSnapshotScript",
+									"type": "HDInsightHive",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 5,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"scriptPath": {
+											"value": "@toLower(CONCAT('hivesnapshotscripts/',item().DatabaseName,'/',item().SchemaName,'/',item().ObjectName,'.hql'))",
+											"type": "Expression"
+										},
+										"scriptLinkedService": {
+											"referenceName": "avidxsacpollockhdinsight",
+											"type": "LinkedServiceReference"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "avidxhdisparkcpollocksandbox",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GetMetadata')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CreateMetadataLoad",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "GetMetadataSources",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'meta].[uspCreateMetadataLoad]')]"
+							},
+							"dataset": {
+								"referenceName": "MetadataProcess_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"SchemaName": " ",
+									"TableName": " "
+								}
+							}
+						}
+					},
+					{
+						"name": "ProcessMetadataLoad",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Wait",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[concat('[', 'meta].[uspProcessMetadataLoad]')]",
+							"storedProcedureParameters": {
+								"MetadataLoadID": {
+									"value": {
+										"value": "@activity('CreateMetadataLoad').output.firstRow.MetadataLoadID",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "MetadataProcess",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "FE_GetMetadata_SQLServer_IsAzureSQL_false",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter_SQLServer_IsAzureSQLDB_false",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter_SQLServer_IsAzureSQLDB_false').output?.value",
+								"type": "Expression"
+							},
+							"batchCount": 50,
+							"activities": [
+								{
+									"name": "Is_SQLServer_SQLAuth",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@bool(coalesce(item().IsSQLAuthentication,'false'))",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "GetMetadata_SQLServer",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "SqlSource",
+														"sqlReaderQuery": {
+															"value": "@variables('MetadataSQLStmt')",
+															"type": "Expression"
+														}
+													},
+													"sink": {
+														"type": "SqlSink",
+														"writeBatchSize": 10000
+													},
+													"enableStaging": false,
+													"dataIntegrationUnits": 0
+												},
+												"inputs": [
+													{
+														"referenceName": "OnPremDB_DS",
+														"type": "DatasetReference",
+														"parameters": {
+															"ServerName": {
+																"value": "@item().ServerName",
+																"type": "Expression"
+															},
+															"DatabaseName": {
+																"value": "@item().DatabaseName",
+																"type": "Expression"
+															},
+															"SchemaName": {
+																"value": "string('')",
+																"type": "Expression"
+															},
+															"ObjectName": {
+																"value": "string('')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "MetadataProcess_DS",
+														"type": "DatasetReference",
+														"parameters": {
+															"SchemaName": "meta",
+															"TableName": "MetadataLoadSQLServer_stg"
+														}
+													}
+												]
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Copy Data from SQL Auth Source",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "SqlSource",
+														"sqlReaderQuery": {
+															"value": "@variables('MetadataSQLStmt')",
+															"type": "Expression"
+														}
+													},
+													"sink": {
+														"type": "SqlSink",
+														"writeBatchSize": 10000
+													},
+													"enableStaging": false,
+													"dataIntegrationUnits": 0
+												},
+												"inputs": [
+													{
+														"referenceName": "OnPremDB_SQLAuth_DS",
+														"type": "DatasetReference",
+														"parameters": {
+															"ConnectionStringAKVSecret": {
+																"value": "@item().ConnectionStringSecret",
+																"type": "Expression"
+															},
+															"SchemaName": {
+																"value": "string('')",
+																"type": "Expression"
+															},
+															"ObjectName": {
+																"value": "string('')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "MetadataProcess_DS",
+														"type": "DatasetReference",
+														"parameters": {
+															"SchemaName": "meta",
+															"TableName": "MetadataLoadSQLServer_stg"
+														}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "GetMetadataSources",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'meta].[uspGetMetadataSources]')]",
+								"storedProcedureParameters": {
+									"SourceType": {
+										"type": "String",
+										"value": null
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "MetadataProcess_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"SchemaName": " ",
+									"TableName": " "
+								}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "TruncateMetadataLoadStageTables",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "CreateMetadataLoad",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[concat('[', 'meta].[uspTruncateMetadataLoadStageTables]')]"
+						},
+						"linkedServiceName": {
+							"referenceName": "MetadataProcess",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Filter_SQLServer_IsAzureSQLDB_false",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Filter_SQLServer",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter_SQLServer').output?.value",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@equals(coalesce(item().IsAzureSQLDB, false), false)",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Filter_SQLServer_IsAzureSQLDB_true",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Filter_SQLServer",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter_SQLServer').output?.value",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@equals(coalesce(item().IsAzureSQLDB,'false'), true)",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "FE_GetMetadata_SQLServer_IsAzureSQL_true",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter_SQLServer_IsAzureSQLDB_true",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter_SQLServer_IsAzureSQLDB_true').output?.value",
+								"type": "Expression"
+							},
+							"batchCount": 50,
+							"activities": [
+								{
+									"name": "SQLServer_AzureSQLDB",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@bool(coalesce(item().IsSQLAuthentication,'false'))",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Copy Metadata from AzureSQLDB",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "SqlSource",
+														"sqlReaderQuery": {
+															"value": "@variables('MetadataSQLStmt')",
+															"type": "Expression"
+														}
+													},
+													"sink": {
+														"type": "SqlSink",
+														"writeBatchSize": 10000
+													},
+													"enableStaging": false,
+													"dataIntegrationUnits": 0
+												},
+												"inputs": [
+													{
+														"referenceName": "AzureSQLDB_DS",
+														"type": "DatasetReference",
+														"parameters": {
+															"ServerName": {
+																"value": "@item().ServerName",
+																"type": "Expression"
+															},
+															"DatabaseName": {
+																"value": "@item().DatabaseName",
+																"type": "Expression"
+															},
+															"SchemaName": {
+																"value": "string('')",
+																"type": "Expression"
+															},
+															"ObjectName": {
+																"value": "string('')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "MetadataProcess_DS",
+														"type": "DatasetReference",
+														"parameters": {
+															"SchemaName": "meta",
+															"TableName": "MetadataLoadSQLServer_stg"
+														}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Wait",
+						"type": "Wait",
+						"dependsOn": [
+							{
+								"activity": "FE_GetMetadata_SQLServer_IsAzureSQL_false",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "FE_GetMetadata_SQLServer_IsAzureSQL_true",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					},
+					{
+						"name": "Filter_SQLServer",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "TruncateMetadataLoadStageTables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetMetadataSources').output?.value",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@equals(item().SourceType, 'SQLServer')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Filter_Salesforce",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "TruncateMetadataLoadStageTables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetMetadataSources').output?.value",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@equals(item().SourceType, 'Salesforce')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"variables": {
+					"MetadataSQLStmt": {
+						"type": "String",
+						"defaultValue": "SELECT\tObjectType, \t\tDB_NAME() AS DatabaseName, \t\tSchemaName, \t\tObjectName, \t\tColumnName, \t\tColumnAttributeName, \t\tColumnAttributeValue FROM ( \tSELECT\tobj.ObjectType, \t\t\ts.name AS SchemaName, \t\t\tobj.name AS ObjectName, \t\t\tc.name AS ColumnName, \t\t\tCONVERT(VARCHAR(255), c.column_id) AS column_id, \t\t\tCONVERT(VARCHAR(255), ty.name) AS data_type, \t\t\tCONVERT(VARCHAR(255), c.max_length) AS max_length, \t\t\tCONVERT(VARCHAR(255), c.precision) AS precision, \t\t\tCONVERT(VARCHAR(255), c.scale) AS scale, \t\t\tCONVERT(VARCHAR(255), c.collation_name) AS collation_name, \t\t\tCONVERT(VARCHAR(255), c.is_nullable) AS is_nullable, \t\t\tCONVERT(VARCHAR(255), c.is_identity) AS is_identity, \t\t\tCONVERT(VARCHAR(255), c.is_computed) AS is_computed, \t\t\tCONVERT(VARCHAR(255), ic.key_ordinal) AS pk_column_ordinal FROM (\tSELECT t.schema_id, t.object_id, t.name, t.type_desc AS ObjectType \t\tFROM sys.tables AS t \t\tWHERE (t.is_ms_shipped = 0 OR t.name LIKE '%_CT') \t\tUNION \t\tSELECT v.schema_id, v.object_id, v.name, v.type_desc AS ObjectType \t\tFROM sys.views AS v \t\tWHERE v.is_ms_shipped = 0 \t\t) AS obj \tINNER JOIN sys.schemas AS s \t\tON s.schema_id = obj.schema_id \tINNER JOIN sys.columns AS c \t\tON c.object_id = obj.object_id \tINNER JOIN sys.types AS ty \t\tON ty.user_type_id = c.user_type_id \tLEFT OUTER JOIN sys.indexes AS i \t\tON i.object_id = obj.object_id \t\t\tAND i.is_primary_key = 1 \tLEFT OUTER JOIN sys.index_columns AS ic \t\tON ic.object_id = i.object_id \t\t\tAND ic.index_id = i.index_id \t\t\tAND ic.column_id = c.column_id \t) AS objs UNPIVOT ( \tColumnAttributeValue \tFOR ColumnAttributeName IN (column_id, data_type, max_length, precision, scale, collation_name, is_nullable, is_identity, is_computed, pk_column_ordinal) ) AS unpiv ORDER BY unpiv.ObjectType, unpiv.SchemaName, unpiv.ObjectName, unpiv.ColumnName, unpiv.ColumnAttributeName"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HDI_spark_cluster_hql_script')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Hive1",
+						"type": "HDInsightHive",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": "hiveexternaltablescripts/integrations/pfl/tconnection.hql",
+							"scriptLinkedService": {
+								"referenceName": "avidxsacpollockhdinsight",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "avidxhdisparkcpollocksandbox",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/HDInsight_script_test')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetExternalTableScript",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetExternalTableSchemaSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": "avidpaytransaction"
+									},
+									"EscapeChar": {
+										"type": "String",
+										"value": "\""
+									},
+									"NumberHeaderLinesSkip": {
+										"type": "String",
+										"value": "1"
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": "trn"
+									},
+									"SeparatorChar": {
+										"type": "String",
+										"value": ","
+									},
+									"TableName": {
+										"type": "String",
+										"value": "tpayment"
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "CopyExternalTableScriptToStorage",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetExternalTableSchemaSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": "avidpaytransaction"
+									},
+									"EscapeChar": {
+										"type": "String",
+										"value": "\""
+									},
+									"NumberHeaderLinesSkip": {
+										"type": "String",
+										"value": "1"
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": "trn"
+									},
+									"SeparatorChar": {
+										"type": "String",
+										"value": ","
+									},
+									"TableName": {
+										"type": "String",
+										"value": "tpayment"
+									}
+								}
+							},
+							"sink": {
+								"type": "BlobSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ExternalTableScript_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": {
+										"value": "avidpaytransaction/trn/tpayment.hql",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "CreateExternalTable",
+						"type": "HDInsightHive",
+						"dependsOn": [
+							{
+								"activity": "CopyExternalTableScriptToStorage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": "hiveexternaltablescripts/avidpaytransaction/trn/tpayment.hql",
+							"getDebugInfo": "Always",
+							"scriptLinkedService": {
+								"referenceName": "avidxsacpollockhdinsight",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "avidxhdisparkcpollocksandbox",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MergeRawZoneAvroFiles')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureDataLakeStoreSource",
+								"recursive": true
+							},
+							"sink": {
+								"type": "AzureDataLakeStoreSink",
+								"copyBehavior": "MergeFiles"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Gen1_avro",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "raw/avidpaytransaction/avidpaytransaction_trn/tpaymentdetail/2019/201903",
+									"FileName": " "
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen1_avro",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "raw/avidpaytransaction/avidpaytransaction_trn/tpaymentdetail/2019",
+									"FileName": "tpayment_201903.avro"
+								}
+							}
+						]
+					},
+					{
+						"name": "Delete1",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Copy Data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "ADLS_Gen1_avro_no_filename",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": "raw/avidpaytransaction/avidpaytransaction_trn/tpaymentdetail/2019/201903"
+								}
+							},
+							"recursive": true,
+							"logStorageSettings": {
+								"linkedServiceName": {
+									"referenceName": "AzureDataLakeStore1",
+									"type": "LinkedServiceReference"
+								},
+								"path": "raw/deleted/avidpaytransaction/avidpaytransaction_static/tpaymentmethod/2019"
+							},
+							"enableLogging": true
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RawStandardizedProcess')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Hive query to ADLS",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Wait for Hive scripts to run",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "HiveSource"
+							},
+							"sink": {
+								"type": "AzureDataLakeStoreSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Hive_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"ObjectName": {
+										"value": "@variables('HiveSnapshotViewName')",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen1_orc",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName}",
+										"type": "Expression"
+									},
+									"FileName": {
+										"value": "@{pipeline().parameters.ObjectName}.orc",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Create Hive External Table",
+						"type": "HDInsightHive",
+						"dependsOn": [
+							{
+								"activity": "Hive External Table script to Azure Storage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": {
+								"value": "hiveexternaltablescripts/@{variables('HiveExternalTableScriptName')}",
+								"type": "Expression"
+							},
+							"getDebugInfo": "Always",
+							"scriptLinkedService": {
+								"referenceName": "avidxsasandboxcpollock",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "avidxhdisparkcpollocksandbox",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Set HiveSnapshotViewName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveSnapshotViewName",
+							"value": {
+								"value": "v_@{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}_@{pipeline().parameters.ObjectName}_snapshot",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Hive External Table script to Azure Storage",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Wait after variables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DatabaseName",
+											"type": "Expression"
+										}
+									},
+									"HiveTableName": {
+										"type": "String",
+										"value": {
+											"value": "@variables('HiveTableName')",
+											"type": "Expression"
+										}
+									},
+									"ObjectName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.ObjectName",
+											"type": "Expression"
+										}
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SchemaName",
+											"type": "Expression"
+										}
+									},
+									"StorageAccountLocation": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.StorageAccountLocation",
+											"type": "Expression"
+										}
+									},
+									"StoredAsType": {
+										"type": "String",
+										"value": "ORC"
+									}
+								}
+							},
+							"sink": {
+								"type": "BlobSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ExternalTableScript_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": {
+										"value": "@variables('HiveExternalTableScriptName')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Wait for Hive scripts to run",
+						"type": "Wait",
+						"dependsOn": [
+							{
+								"activity": "Create Hive External Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Create Hive Snapshot View",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					},
+					{
+						"name": "Create Hive Snapshot View",
+						"type": "HDInsightHive",
+						"dependsOn": [
+							{
+								"activity": "Hive View script to Azure Storage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": {
+								"value": "hivesnapshotviewscripts/@{variables('HiveSnapshotViewScriptName')}",
+								"type": "Expression"
+							},
+							"getDebugInfo": "Always",
+							"scriptLinkedService": {
+								"referenceName": "avidxsasandboxcpollock",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "avidxhdisparkcpollocksandbox",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Hive View script to Azure Storage",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Wait after variables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveSnapshotViewScriptSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DatabaseName",
+											"type": "Expression"
+										}
+									},
+									"ObjectName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.ObjectName",
+											"type": "Expression"
+										}
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SchemaName",
+											"type": "Expression"
+										}
+									},
+									"PartitionColumns": {
+										"type": "String",
+										"value": null
+									},
+									"OrderByColumn": {
+										"type": "String",
+										"value": "INPUT__FILE__NAME"
+									}
+								}
+							},
+							"sink": {
+								"type": "BlobSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "HiveSnapshotViewScripts_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"Blob": "hivesnapshotviewscripts",
+									"Path": {
+										"value": "@variables('HiveSnapshotViewScriptName')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Set HiveTableName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveTableName",
+							"value": {
+								"value": "@{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}_@{pipeline().parameters.ObjectName}_snapshot",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Wait after variables",
+						"type": "Wait",
+						"dependsOn": [
+							{
+								"activity": "Set HiveSnapshotViewName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set HiveTableName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set HiveExternalTableScriptName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set HiveSnapshotViewScriptName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					},
+					{
+						"name": "Set HiveExternalTableScriptName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveExternalTableScriptName",
+							"value": {
+								"value": "@toLower(CONCAT(pipeline().parameters.DatabaseName,if(empty(pipeline().parameters.SchemaName),'.hql',CONCAT('/',pipeline().parameters.SchemaName,if(empty(pipeline().parameters.ObjectName),'.hql',CONCAT('/',pipeline().parameters.ObjectName,'.hql'))))))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set HiveSnapshotViewScriptName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveSnapshotViewScriptName",
+							"value": {
+								"value": "@toLower(CONCAT(pipeline().parameters.DatabaseName,if(empty(pipeline().parameters.SchemaName),'.hql',CONCAT('/',pipeline().parameters.SchemaName,if(empty(pipeline().parameters.ObjectName),'.hql',CONCAT('/',pipeline().parameters.ObjectName,'.hql'))))))",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String",
+						"defaultValue": "avidpaytransaction"
+					},
+					"SchemaName": {
+						"type": "String",
+						"defaultValue": "static"
+					},
+					"ObjectName": {
+						"type": "String",
+						"defaultValue": "tpaymenttype"
+					},
+					"StorageAccountLocation": {
+						"type": "String",
+						"defaultValue": "adl://avidxdlssandboxcpollock.azuredatalakestore.net/rawstandardized"
+					}
+				},
+				"variables": {
+					"HiveSnapshotViewName": {
+						"type": "String"
+					},
+					"HiveTableName": {
+						"type": "String"
+					},
+					"HiveExternalTableScriptName": {
+						"type": "String"
+					},
+					"HiveSnapshotViewScriptName": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/RawStandardizedProcess_Hadoop')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -578,42 +2659,586 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/TestTrigger1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
+			"name": "[concat(parameters('factoryName'), '/RawStandardizedProcess_Hive2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
+				"activities": [
 					{
-						"pipelineReference": {
-							"referenceName": "tbatchexportstatus_AzureSQLDB_to_ADLS_gen1",
-							"type": "PipelineReference"
+						"name": "Hive query to ADLS",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Wait for Hive scripts to run",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
 						},
-						"parameters": {}
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "HiveSource"
+							},
+							"sink": {
+								"type": "AzureDataLakeStoreSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Hive2_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"ObjectName": {
+										"value": "@variables('HiveSnapshotViewName')",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_Gen1_orc",
+								"type": "DatasetReference",
+								"parameters": {
+									"Directory": {
+										"value": "rawstandardized/@{pipeline().parameters.DatabaseName}/@{pipeline().parameters.SchemaName}/@{pipeline().parameters.ObjectName}",
+										"type": "Expression"
+									},
+									"FileName": {
+										"value": "@{pipeline().parameters.ObjectName}.orc",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Create Hive External Table",
+						"type": "HDInsightHive",
+						"dependsOn": [
+							{
+								"activity": "Hive External Table script to Azure Storage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": {
+								"value": "hiveexternaltablescripts/@{variables('HiveExternalTableScriptName')}",
+								"type": "Expression"
+							},
+							"getDebugInfo": "Always",
+							"scriptLinkedService": {
+								"referenceName": "avidxsasandboxcpollock",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "avidxhdisparkcpollocksandbox2",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Set HiveSnapshotViewName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveSnapshotViewName",
+							"value": {
+								"value": "v_@{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}_@{pipeline().parameters.ObjectName}_snapshot",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Hive External Table script to Azure Storage",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Wait after variables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DatabaseName",
+											"type": "Expression"
+										}
+									},
+									"HiveTableName": {
+										"type": "String",
+										"value": {
+											"value": "@variables('HiveTableName')",
+											"type": "Expression"
+										}
+									},
+									"ObjectName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.ObjectName",
+											"type": "Expression"
+										}
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SchemaName",
+											"type": "Expression"
+										}
+									},
+									"StorageAccountLocation": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.StorageAccountLocation",
+											"type": "Expression"
+										}
+									},
+									"StoredAsType": {
+										"type": "String",
+										"value": "ORC"
+									}
+								}
+							},
+							"sink": {
+								"type": "BlobSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ExternalTableScript_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": {
+										"value": "@variables('HiveExternalTableScriptName')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Wait for Hive scripts to run",
+						"type": "Wait",
+						"dependsOn": [
+							{
+								"activity": "Create Hive External Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Create Hive Snapshot View",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					},
+					{
+						"name": "Create Hive Snapshot View",
+						"type": "HDInsightHive",
+						"dependsOn": [
+							{
+								"activity": "Hive View script to Azure Storage",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"scriptPath": {
+								"value": "hivesnapshotviewscripts/@{variables('HiveSnapshotViewScriptName')}",
+								"type": "Expression"
+							},
+							"getDebugInfo": "Always",
+							"scriptLinkedService": {
+								"referenceName": "avidxsasandboxcpollock",
+								"type": "LinkedServiceReference"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "avidxhdisparkcpollocksandbox2",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Hive View script to Azure Storage",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Wait after variables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveSnapshotViewScriptSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DatabaseName",
+											"type": "Expression"
+										}
+									},
+									"ObjectName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.ObjectName",
+											"type": "Expression"
+										}
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SchemaName",
+											"type": "Expression"
+										}
+									},
+									"PartitionColumns": {
+										"type": "String",
+										"value": null
+									},
+									"OrderByColumn": {
+										"type": "String",
+										"value": "INPUT__FILE__NAME"
+									}
+								}
+							},
+							"sink": {
+								"type": "BlobSink"
+							},
+							"enableStaging": false,
+							"dataIntegrationUnits": 0
+						},
+						"inputs": [
+							{
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "HiveSnapshotViewScripts_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"Blob": "hivesnapshotviewscripts",
+									"Path": {
+										"value": "@variables('HiveSnapshotViewScriptName')",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Set HiveTableName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveTableName",
+							"value": {
+								"value": "@{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}_@{pipeline().parameters.ObjectName}_snapshot",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Wait after variables",
+						"type": "Wait",
+						"dependsOn": [
+							{
+								"activity": "Set HiveSnapshotViewName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set HiveTableName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set HiveExternalTableScriptName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set HiveSnapshotViewScriptName Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					},
+					{
+						"name": "Set HiveExternalTableScriptName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveExternalTableScriptName",
+							"value": {
+								"value": "@toLower(CONCAT(pipeline().parameters.DatabaseName,if(empty(pipeline().parameters.SchemaName),'.hql',CONCAT('/',pipeline().parameters.SchemaName,if(empty(pipeline().parameters.ObjectName),'.hql',CONCAT('/',pipeline().parameters.ObjectName,'.hql'))))))",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Set HiveSnapshotViewScriptName Variable",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "HiveSnapshotViewScriptName",
+							"value": {
+								"value": "@toLower(CONCAT(pipeline().parameters.DatabaseName,if(empty(pipeline().parameters.SchemaName),'.hql',CONCAT('/',pipeline().parameters.SchemaName,if(empty(pipeline().parameters.ObjectName),'.hql',CONCAT('/',pipeline().parameters.ObjectName,'.hql'))))))",
+								"type": "Expression"
+							}
+						}
 					}
 				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2019-03-01T18:41:00Z",
-						"timeZone": "UTC",
-						"schedule": {
-							"minutes": [
-								0
-							],
-							"hours": [
-								20
+				"parameters": {
+					"DatabaseName": {
+						"type": "String",
+						"defaultValue": "avidpaytransaction"
+					},
+					"SchemaName": {
+						"type": "String",
+						"defaultValue": "static"
+					},
+					"ObjectName": {
+						"type": "String",
+						"defaultValue": "tpaymenttype"
+					},
+					"StorageAccountLocation": {
+						"type": "String",
+						"defaultValue": "adl://avidxdlssandboxcpollock.azuredatalakestore.net/rawstandardized"
+					}
+				},
+				"variables": {
+					"HiveSnapshotViewName": {
+						"type": "String"
+					},
+					"HiveTableName": {
+						"type": "String"
+					},
+					"HiveExternalTableScriptName": {
+						"type": "String"
+					},
+					"HiveSnapshotViewScriptName": {
+						"type": "String"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExecuteHiveExternalTableScripts_Hive2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetObjectList",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 5,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlSource",
+								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetMetadataObjectsSQLServer]')]",
+								"storedProcedureParameters": {
+									"DatabaseName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.DatabaseName",
+											"type": "Expression"
+										}
+									},
+									"IsReturnAllIndividualObjects": {
+										"type": "Boolean",
+										"value": {
+											"value": "@bool(pipeline().parameters.IsCreateInvididualObjectScripts)",
+											"type": "Expression"
+										}
+									},
+									"ObjectName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.ObjectName",
+											"type": "Expression"
+										}
+									},
+									"SchemaName": {
+										"type": "String",
+										"value": {
+											"value": "@pipeline().parameters.SchemaName",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"dataset": {
+								"referenceName": "ETLConfigDB_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE_ExecuteHiveExternalTableScripts",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "GetObjectList",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('GetObjectList').output.value",
+								"type": "Expression"
+							},
+							"batchCount": 50,
+							"activities": [
+								{
+									"name": "ExecuteHiveExternalTableScript",
+									"type": "HDInsightHive",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"scriptPath": {
+											"value": "@toLower(CONCAT('hiveexternaltablescripts/',item().DatabaseName,if(empty(item().SchemaName),'.hql',CONCAT('/',item().SchemaName,if(empty(item().ObjectName),'.hql',CONCAT('/',item().ObjectName,'.hql'))))))",
+											"type": "Expression"
+										},
+										"getDebugInfo": "Failure",
+										"scriptLinkedService": {
+											"referenceName": "avidxsacpollockhdinsight",
+											"type": "LinkedServiceReference"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "avidxhdisparkcpollocksandbox2",
+										"type": "LinkedServiceReference"
+									}
+								}
 							]
 						}
 					}
-				}
+				],
+				"parameters": {
+					"DatabaseName": {
+						"type": "String"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					},
+					"IsCreateInvididualObjectScripts": {
+						"type": "Bool",
+						"defaultValue": false
+					}
+				},
+				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/tbatchexportstatus_AzureSQLDB_to_ADLS_gen1')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Execute_RawStandardizedProcess')]",
@@ -721,7 +3346,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/RawStandardizedProcess')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Execute_RawStandardizedProcess_Hadoop')]",

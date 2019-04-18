@@ -7,13 +7,53 @@
 			"metadata": "Data Factory Name",
 			"defaultValue": "AvidX-Sandbox-cpollock"
 		},
-		"avidxhdihadoopcpollocksandbox_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'avidxhdihadoopcpollocksandbox'"
+		"ADLS_Gen1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
 		},
-		"avidxhdisparkcpollocksandbox_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox'"
+		"ADLS_Gen1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_avro_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().FileName"
+		},
+		"ADLS_Gen1_avro_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_avro1_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().FileName"
+		},
+		"ADLS_Gen1_avro1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_avro_no_filename_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_avro_no_filename1_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_csv_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": ""
+		},
+		"ADLS_Gen1_csv_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
+		},
+		"ADLS_Gen1_orc_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@replace(dataset().FileName,' ','')"
+		},
+		"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "@dataset().Directory"
 		},
 		"ADLS_Gen2_properties_typeProperties_folderPath": {
 			"type": "string",
@@ -50,44 +90,237 @@
 		"HiveSnapshotViewScripts_DS_properties_typeProperties_folderPath": {
 			"type": "string",
 			"defaultValue": "@dataset().Blob"
-		},
-		"SnapshotScript_DS_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@dataset().path"
-		},
-		"SnapshotScript_DS_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "hivesnapshotscripts"
-		},
-		"tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "tbatchexportstatus.avro"
-		},
-		"tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "raw/ods/integrations_static/tbatchexportstatus"
-		},
-		"tbatchexportstatusAVRO_gen2_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "tbatchexportstatus02222019.avro"
-		},
-		"tbatchexportstatusAVRO_gen2_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "rawzone/integrations/static/tbatchexportstatus/avro"
-		},
-		"avidxhdihadoopcpollocksandbox_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
-		},
-		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_Gen1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String",
+						"defaultValue": "rawzone"
+					}
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"fileName": "[parameters('ADLS_Gen1_properties_typeProperties_fileName')]",
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen1_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_avro')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStore1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String"
+					},
+					"FileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "AvroFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Gen1_avro_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen1_avro_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_avro1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_Gen1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String"
+					},
+					"FileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "AvroFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Gen1_avro1_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen1_avro1_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_avro_no_filename')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStore1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "AvroFormat"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen1_avro_no_filename_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_avro_no_filename1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_Gen1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "AvroFormat"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen1_avro_no_filename1_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_Gen1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String",
+						"defaultValue": "rawzone"
+					}
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "TextFormat",
+						"columnDelimiter": ",",
+						"rowDelimiter": "",
+						"quoteChar": "\"",
+						"nullValue": "",
+						"treatEmptyAsNull": true,
+						"skipLineCount": 0,
+						"firstRowAsHeader": true
+					},
+					"fileName": "[parameters('ADLS_Gen1_csv_properties_typeProperties_fileName')]",
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen1_csv_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_orc')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStore1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Directory": {
+						"type": "String"
+					},
+					"FileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"format": {
+						"type": "OrcFormat"
+					},
+					"fileName": {
+						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_fileName')]",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_folderPath')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Gen2')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -212,6 +445,50 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSQLDB_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSQLDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@dataset().ServerName",
+							"type": "Expression"
+						},
+						"DatabaseName": {
+							"value": "@dataset().DatabaseName",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"ServerName": {
+						"type": "String"
+					},
+					"DatabaseName": {
+						"type": "String"
+					},
+					"SchemaName": {
+						"type": "String"
+					},
+					"ObjectName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"typeProperties": {
+					"tableName": {
+						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().ObjectName}]')]",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ETLConfigDB_DS')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -304,12 +581,12 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Hive_DS')]",
+			"name": "[concat(parameters('factoryName'), '/Hive_Hadoop_DS')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Hive_avidxhdisparkcpollocksandbox",
+					"referenceName": "Hive_avidxhdihadoopcpollocksandbox",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
@@ -329,24 +606,27 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Hive_Hadoop_DS')]",
+			"name": "[concat(parameters('factoryName'), '/MetadataProcess_DS')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Hive_avidxhdihadoopcpollocksandbox",
+					"referenceName": "MetadataProcess",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
-					"ObjectName": {
+					"SchemaName": {
+						"type": "String"
+					},
+					"TableName": {
 						"type": "String"
 					}
 				},
 				"annotations": [],
-				"type": "HiveObject",
+				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "@dataset().ObjectName",
+						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().TableName}]')]",
 						"type": "Expression"
 					}
 				}
@@ -428,278 +708,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SalesforceObject1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SalesforceOrg1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SalesforceObject",
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SnapshotScript_DS')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "avidxsasandboxcpollock",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"path": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureBlob",
-				"typeProperties": {
-					"format": {
-						"type": "TextFormat",
-						"columnDelimiter": "",
-						"rowDelimiter": "",
-						"nullValue": "\\N",
-						"treatEmptyAsNull": true,
-						"skipLineCount": 0,
-						"firstRowAsHeader": false
-					},
-					"fileName": {
-						"value": "[parameters('SnapshotScript_DS_properties_typeProperties_fileName')]",
-						"type": "Expression"
-					},
-					"folderPath": "[parameters('SnapshotScript_DS_properties_typeProperties_folderPath')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/tBatchStatusAVROFile_ADLS_Gen1_DS')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStore1",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureDataLakeStoreFile",
-				"structure": [
-					{
-						"name": "batchexportstatusid",
-						"type": "Int32"
-					},
-					{
-						"name": "name",
-						"type": "String"
-					},
-					{
-						"name": "displayname",
-						"type": "String"
-					},
-					{
-						"name": "isactive",
-						"type": "Boolean"
-					}
-				],
-				"typeProperties": {
-					"format": {
-						"type": "AvroFormat"
-					},
-					"fileName": "[parameters('tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('tBatchStatusAVROFile_ADLS_Gen1_DS_properties_typeProperties_folderPath')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/tbatchexportstatusAVRO_gen2')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_Gen2",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureBlobFSFile",
-				"typeProperties": {
-					"format": {
-						"type": "AvroFormat"
-					},
-					"fileName": "[parameters('tbatchexportstatusAVRO_gen2_properties_typeProperties_fileName')]",
-					"folderPath": "[parameters('tbatchexportstatusAVRO_gen2_properties_typeProperties_folderPath')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/tbatchexportstatus_azuresqldb_DS')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ODS",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"structure": [
-					{
-						"name": "BatchExportStatusId",
-						"type": "Int32"
-					},
-					{
-						"name": "Name",
-						"type": "String"
-					},
-					{
-						"name": "DisplayName",
-						"type": "String"
-					},
-					{
-						"name": "IsActive",
-						"type": "Boolean"
-					}
-				],
-				"typeProperties": {
-					"tableName": "[concat('[', 'integrations_static].[tBatchExportStatus]')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/avidxhdihadoopcpollocksandbox')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "HDInsight",
-				"typeProperties": {
-					"clusterUri": "https://avidxhdihadoopcpollocksandbox.azurehdinsight.net",
-					"userName": "[parameters('avidxhdihadoopcpollocksandbox_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('avidxhdihadoopcpollocksandbox_password')]"
-					},
-					"isEspEnabled": false,
-					"linkedServiceName": {
-						"referenceName": "avidxsasandboxcpollock",
-						"type": "LinkedServiceReference"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/avidxhdisparkcpollocksandbox')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "HDInsight",
-				"typeProperties": {
-					"clusterUri": "https://avidxhdisparkcpollocksandbox.azurehdinsight.net",
-					"userName": "[parameters('avidxhdisparkcpollocksandbox_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('avidxhdisparkcpollocksandbox_password')]"
-					},
-					"isEspEnabled": false,
-					"linkedServiceName": {
-						"referenceName": "avidxsasandboxcpollock",
-						"type": "LinkedServiceReference"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSQLDB_to_AzureSQLDB')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy Data",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlSource"
-							},
-							"sink": {
-								"type": "SqlSink",
-								"writeBatchSize": 25000,
-								"preCopyScript": {
-									"value": "DROP TABLE IF EXISTS [@{pipeline().parameters.SchemaName}].[@{pipeline().parameters.TableName}]",
-									"type": "Expression"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "ODS_DS",
-								"type": "DatasetReference",
-								"parameters": {
-									"SchemaName": {
-										"value": "@pipeline().parameters.SchemaName",
-										"type": "Expression"
-									},
-									"ObjectName": {
-										"value": "@pipeline().parameters.TableName",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "AzidPayTransaction_AzureSQLDB_DS",
-								"type": "DatasetReference",
-								"parameters": {
-									"SchemaName": {
-										"value": "@pipeline().parameters.SchemaName",
-										"type": "Expression"
-									},
-									"ObjectName": {
-										"value": "@pipeline().parameters.TableName",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"parameters": {
-					"SchemaName": {
-						"type": "String"
-					},
-					"TableName": {
-						"type": "String"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ODS_DS')]",
-				"[concat(variables('factoryId'), '/datasets/AzidPayTransaction_AzureSQLDB_DS')]"
-			]
 		}
 	]
 }

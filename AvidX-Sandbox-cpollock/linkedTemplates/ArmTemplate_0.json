@@ -15,6 +15,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AvidPayTransaction_AzureSQLDB'"
 		},
+		"AzureSQLDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSQLDB'"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'"
+		},
 		"ETLConfigDB_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ETLConfigDB'"
@@ -27,9 +35,9 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdihadoopcpollocksandbox'"
 		},
-		"Hive_avidxhdisparkcpollocksandbox_password": {
+		"MetadataProcess_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox'"
+			"metadata": "Secure string for 'connectionString' of 'MetadataProcess'"
 		},
 		"ODS_connectionString": {
 			"type": "secureString",
@@ -38,6 +46,18 @@
 		"ODS1_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ODS1'"
+		},
+		"OnPremDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'OnPremDB'"
+		},
+		"OnPremDB_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'OnPremDB'"
+		},
+		"OnPremDB_SQLAuth_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'OnPremDB_SQLAuth'"
 		},
 		"SalesforceOrg1_password": {
 			"type": "secureString",
@@ -54,6 +74,14 @@
 		"avidxsasandboxcpollock_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsasandboxcpollock'"
+		},
+		"Hive_avidxhdisparkcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox'"
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox2'"
 		},
 		"ADLS_Gen1_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",
@@ -95,67 +123,54 @@
 			"type": "string",
 			"defaultValue": "admin"
 		},
-		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+		"OnPremDB_properties_typeProperties_userName": {
 			"type": "string",
-			"defaultValue": "admin"
+			"defaultValue": "AVIDXCHANGE\\cpollock"
 		},
 		"SalesforceOrg1_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "mdpintegrations@avidxchange.com.qasit"
 		},
-		"ADLS_Gen1_properties_typeProperties_fileName": {
+		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
 			"type": "string",
-			"defaultValue": ""
+			"defaultValue": "admin"
 		},
-		"ADLS_Gen1_properties_typeProperties_folderPath": {
+		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
 			"type": "string",
-			"defaultValue": "@dataset().Directory"
-		},
-		"ADLS_Gen1_avro_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@dataset().FileName"
-		},
-		"ADLS_Gen1_avro_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().Directory"
-		},
-		"ADLS_Gen1_avro1_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@dataset().FileName"
-		},
-		"ADLS_Gen1_avro1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().Directory"
-		},
-		"ADLS_Gen1_avro_no_filename_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().Directory"
-		},
-		"ADLS_Gen1_avro_no_filename1_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().Directory"
-		},
-		"ADLS_Gen1_csv_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": ""
-		},
-		"ADLS_Gen1_csv_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().Directory"
-		},
-		"ADLS_Gen1_orc_properties_typeProperties_fileName": {
-			"type": "string",
-			"defaultValue": "@replace(dataset().FileName,' ','')"
-		},
-		"ADLS_Gen1_orc_properties_typeProperties_folderPath": {
-			"type": "string",
-			"defaultValue": "@dataset().Directory"
+			"defaultValue": "admin"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Hive_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Hive_avidxhdisparkcpollocksandbox",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"ObjectName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "HiveObject",
+				"typeProperties": {
+					"tableName": {
+						"value": "@dataset().ObjectName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Hive_avidxhdisparkcpollocksandbox')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -219,6 +234,48 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSQLDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "String"
+					},
+					"DatabaseName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSQLDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "String"
+					},
+					"DatabaseName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ETLConfigDB')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -270,26 +327,14 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Hive_avidxhdisparkcpollocksandbox')]",
+			"name": "[concat(parameters('factoryName'), '/MetadataProcess')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"type": "Hive",
+				"type": "AzureSqlDatabase",
 				"typeProperties": {
-					"host": "avidxhdisparkcpollocksandbox.azurehdinsight.net",
-					"port": 443,
-					"serverType": "HiveServer2",
-					"thriftTransportProtocol": null,
-					"authenticationType": "WindowsAzureHDInsightService",
-					"serviceDiscoveryMode": false,
-					"useNativeQuery": false,
-					"username": "[parameters('Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_password')]"
-					},
-					"enableSsl": false
+					"connectionString": "[parameters('MetadataProcess_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -316,6 +361,50 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('ODS1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnPremDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "String"
+					},
+					"DatabaseName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('OnPremDB_connectionString')]",
+					"userName": "[parameters('OnPremDB_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('OnPremDB_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnPremDB_SQLAuth')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"ConnectionStringAKVSecret": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('OnPremDB_SQLAuth_connectionString')]"
 				}
 			},
 			"dependsOn": []
@@ -369,243 +458,54 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/Hive_avidxhdisparkcpollocksandbox')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_Gen1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String",
-						"defaultValue": "rawzone"
-					}
-				},
 				"annotations": [],
-				"type": "AzureDataLakeStoreFile",
+				"type": "Hive",
 				"typeProperties": {
-					"fileName": "[parameters('ADLS_Gen1_properties_typeProperties_fileName')]",
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen1_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
+					"host": "avidxhdisparkcpollocksandbox.azurehdinsight.net",
+					"port": 443,
+					"serverType": "HiveServer2",
+					"thriftTransportProtocol": null,
+					"authenticationType": "WindowsAzureHDInsightService",
+					"serviceDiscoveryMode": false,
+					"useNativeQuery": false,
+					"username": "[parameters('Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_password')]"
+					},
+					"enableSsl": false
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS_Gen1')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_avro')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/Hive_avidxhdisparkcpollocksandbox2')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStore1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String"
-					},
-					"FileName": {
-						"type": "String"
-					}
-				},
 				"annotations": [],
-				"type": "AzureDataLakeStoreFile",
+				"type": "Hive",
 				"typeProperties": {
-					"format": {
-						"type": "AvroFormat"
+					"host": "avidxhdisparkcpollocksandbox2.azurehdinsight.net",
+					"port": 443,
+					"serverType": "HiveServer2",
+					"thriftTransportProtocol": null,
+					"authenticationType": "WindowsAzureHDInsightService",
+					"serviceDiscoveryMode": false,
+					"useNativeQuery": false,
+					"username": "[parameters('Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_password')]"
 					},
-					"fileName": {
-						"value": "[parameters('ADLS_Gen1_avro_properties_typeProperties_fileName')]",
-						"type": "Expression"
-					},
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen1_avro_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
+					"enableSsl": false
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStore1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_avro1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_Gen1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String"
-					},
-					"FileName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureDataLakeStoreFile",
-				"typeProperties": {
-					"format": {
-						"type": "AvroFormat"
-					},
-					"fileName": {
-						"value": "[parameters('ADLS_Gen1_avro1_properties_typeProperties_fileName')]",
-						"type": "Expression"
-					},
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen1_avro1_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS_Gen1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_avro_no_filename')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStore1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureDataLakeStoreFile",
-				"typeProperties": {
-					"format": {
-						"type": "AvroFormat"
-					},
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen1_avro_no_filename_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStore1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_avro_no_filename1')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_Gen1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureDataLakeStoreFile",
-				"typeProperties": {
-					"format": {
-						"type": "AvroFormat"
-					},
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen1_avro_no_filename1_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS_Gen1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_csv')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_Gen1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String",
-						"defaultValue": "rawzone"
-					}
-				},
-				"annotations": [],
-				"type": "AzureDataLakeStoreFile",
-				"typeProperties": {
-					"format": {
-						"type": "TextFormat",
-						"columnDelimiter": ",",
-						"rowDelimiter": "",
-						"quoteChar": "\"",
-						"nullValue": "",
-						"treatEmptyAsNull": true,
-						"skipLineCount": 0,
-						"firstRowAsHeader": true
-					},
-					"fileName": "[parameters('ADLS_Gen1_csv_properties_typeProperties_fileName')]",
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen1_csv_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS_Gen1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Gen1_orc')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStore1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Directory": {
-						"type": "String"
-					},
-					"FileName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"type": "AzureDataLakeStoreFile",
-				"typeProperties": {
-					"format": {
-						"type": "OrcFormat"
-					},
-					"fileName": {
-						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_fileName')]",
-						"type": "Expression"
-					},
-					"folderPath": {
-						"value": "[parameters('ADLS_Gen1_orc_properties_typeProperties_folderPath')]",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStore1')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
