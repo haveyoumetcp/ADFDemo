@@ -50,7 +50,7 @@
 							"type": "ExecutePipeline",
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "RawStandardizedProcess",
+									"referenceName": "RawStandardizedProcess_Hive2",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
