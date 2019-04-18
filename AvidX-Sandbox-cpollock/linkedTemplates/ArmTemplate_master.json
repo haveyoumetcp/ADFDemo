@@ -35,6 +35,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Hive_avidxhdihadoopcpollocksandbox'"
 		},
+		"Hive_avidxhdisparkcpollocksandbox_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox'"
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox2'"
+		},
 		"MetadataProcess_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'MetadataProcess'"
@@ -75,6 +83,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox'"
 		},
+		"avidxhdisparkcpollocksandbox2_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox2'"
+		},
 		"avidxsacpollockhdinsight_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsacpollockhdinsight'"
@@ -82,18 +94,6 @@
 		"avidxsasandboxcpollock_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'avidxsasandboxcpollock'"
-		},
-		"Hive_avidxhdisparkcpollocksandbox_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox'"
-		},
-		"avidxhdisparkcpollocksandbox2_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'avidxhdisparkcpollocksandbox2'"
-		},
-		"Hive_avidxhdisparkcpollocksandbox2_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'Hive_avidxhdisparkcpollocksandbox2'"
 		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {
 			"type": "string",
@@ -171,6 +171,14 @@
 			"type": "string",
 			"defaultValue": "hiveexternaltablescripts"
 		},
+		"ExternalTableScript_Hive2_DS_properties_typeProperties_fileName": {
+			"type": "string",
+			"defaultValue": "@dataset().path"
+		},
+		"ExternalTableScript_Hive2_DS_properties_typeProperties_folderPath": {
+			"type": "string",
+			"defaultValue": "hiveexternaltablescripts"
+		},
 		"HiveSnapshotViewScripts_DS_properties_typeProperties_fileName": {
 			"type": "string",
 			"defaultValue": "@dataset().Path"
@@ -243,6 +251,14 @@
 			"type": "string",
 			"defaultValue": "admin"
 		},
+		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "admin"
+		},
 		"OnPremDB_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "AVIDXCHANGE\\cpollock"
@@ -259,15 +275,7 @@
 			"type": "string",
 			"defaultValue": "admin"
 		},
-		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
-			"type": "string",
-			"defaultValue": "admin"
-		},
 		"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "admin"
-		},
-		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
 			"type": "string",
 			"defaultValue": "admin"
 		},
@@ -319,6 +327,12 @@
 					"Hive_avidxhdihadoopcpollocksandbox_password": {
 						"value": "[parameters('Hive_avidxhdihadoopcpollocksandbox_password')]"
 					},
+					"Hive_avidxhdisparkcpollocksandbox_password": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_password')]"
+					},
+					"Hive_avidxhdisparkcpollocksandbox2_password": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_password')]"
+					},
 					"MetadataProcess_connectionString": {
 						"value": "[parameters('MetadataProcess_connectionString')]"
 					},
@@ -348,12 +362,6 @@
 					},
 					"avidxsasandboxcpollock_connectionString": {
 						"value": "[parameters('avidxsasandboxcpollock_connectionString')]"
-					},
-					"Hive_avidxhdisparkcpollocksandbox_password": {
-						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_password')]"
-					},
-					"Hive_avidxhdisparkcpollocksandbox2_password": {
-						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_password')]"
 					},
 					"ADLS_Gen1_properties_typeProperties_dataLakeStoreUri": {
 						"value": "[parameters('ADLS_Gen1_properties_typeProperties_dataLakeStoreUri')]"
@@ -385,17 +393,23 @@
 					"Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username": {
 						"value": "[parameters('Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username')]"
 					},
+					"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username')]"
+					},
+					"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
+						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username')]"
+					},
 					"OnPremDB_properties_typeProperties_userName": {
 						"value": "[parameters('OnPremDB_properties_typeProperties_userName')]"
 					},
 					"SalesforceOrg1_properties_typeProperties_username": {
 						"value": "[parameters('SalesforceOrg1_properties_typeProperties_username')]"
 					},
-					"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
-						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username')]"
+					"ADLS_Gen1_properties_typeProperties_fileName": {
+						"value": "[parameters('ADLS_Gen1_properties_typeProperties_fileName')]"
 					},
-					"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
-						"value": "[parameters('Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username')]"
+					"ADLS_Gen1_properties_typeProperties_folderPath": {
+						"value": "[parameters('ADLS_Gen1_properties_typeProperties_folderPath')]"
 					}
 				}
 			},
@@ -414,12 +428,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"ADLS_Gen1_properties_typeProperties_fileName": {
-						"value": "[parameters('ADLS_Gen1_properties_typeProperties_fileName')]"
-					},
-					"ADLS_Gen1_properties_typeProperties_folderPath": {
-						"value": "[parameters('ADLS_Gen1_properties_typeProperties_folderPath')]"
 					},
 					"ADLS_Gen1_avro_properties_typeProperties_fileName": {
 						"value": "[parameters('ADLS_Gen1_avro_properties_typeProperties_fileName')]"
@@ -471,6 +479,12 @@
 					},
 					"ExternalTableScript_DS_properties_typeProperties_folderPath": {
 						"value": "[parameters('ExternalTableScript_DS_properties_typeProperties_folderPath')]"
+					},
+					"ExternalTableScript_Hive2_DS_properties_typeProperties_fileName": {
+						"value": "[parameters('ExternalTableScript_Hive2_DS_properties_typeProperties_fileName')]"
+					},
+					"ExternalTableScript_Hive2_DS_properties_typeProperties_folderPath": {
+						"value": "[parameters('ExternalTableScript_Hive2_DS_properties_typeProperties_folderPath')]"
 					},
 					"HiveSnapshotViewScripts_DS_properties_typeProperties_fileName": {
 						"value": "[parameters('HiveSnapshotViewScripts_DS_properties_typeProperties_fileName')]"

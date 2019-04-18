@@ -26,6 +26,12 @@
 		"Hive_avidxhdihadoopcpollocksandbox_password": {
 			"value": ""
 		},
+		"Hive_avidxhdisparkcpollocksandbox_password": {
+			"value": ""
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_password": {
+			"value": ""
+		},
 		"MetadataProcess_connectionString": {
 			"value": ""
 		},
@@ -56,19 +62,13 @@
 		"avidxhdisparkcpollocksandbox_password": {
 			"value": ""
 		},
+		"avidxhdisparkcpollocksandbox2_password": {
+			"value": ""
+		},
 		"avidxsacpollockhdinsight_connectionString": {
 			"value": ""
 		},
 		"avidxsasandboxcpollock_connectionString": {
-			"value": ""
-		},
-		"Hive_avidxhdisparkcpollocksandbox_password": {
-			"value": ""
-		},
-		"avidxhdisparkcpollocksandbox2_password": {
-			"value": ""
-		},
-		"Hive_avidxhdisparkcpollocksandbox2_password": {
 			"value": ""
 		},
 		"ADLS_Gen1_properties_typeProperties_fileName": {
@@ -128,6 +128,12 @@
 		"ExternalTableScript_DS_properties_typeProperties_folderPath": {
 			"value": "hiveexternaltablescripts"
 		},
+		"ExternalTableScript_Hive2_DS_properties_typeProperties_fileName": {
+			"value": "@dataset().path"
+		},
+		"ExternalTableScript_Hive2_DS_properties_typeProperties_folderPath": {
+			"value": "hiveexternaltablescripts"
+		},
 		"HiveSnapshotViewScripts_DS_properties_typeProperties_fileName": {
 			"value": "@dataset().Path"
 		},
@@ -182,6 +188,12 @@
 		"Hive_avidxhdihadoopcpollocksandbox_properties_typeProperties_username": {
 			"value": "admin"
 		},
+		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
+			"value": "admin"
+		},
+		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
+			"value": "admin"
+		},
 		"OnPremDB_properties_typeProperties_userName": {
 			"value": "AVIDXCHANGE\\cpollock"
 		},
@@ -194,13 +206,7 @@
 		"avidxhdisparkcpollocksandbox_properties_typeProperties_userName": {
 			"value": "admin"
 		},
-		"Hive_avidxhdisparkcpollocksandbox_properties_typeProperties_username": {
-			"value": "admin"
-		},
 		"avidxhdisparkcpollocksandbox2_properties_typeProperties_userName": {
-			"value": "admin"
-		},
-		"Hive_avidxhdisparkcpollocksandbox2_properties_typeProperties_username": {
 			"value": "admin"
 		},
 		"containerUri": {
