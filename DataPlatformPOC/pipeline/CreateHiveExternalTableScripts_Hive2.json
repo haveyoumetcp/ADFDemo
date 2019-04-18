@@ -138,7 +138,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "ExternalTableScript_DS",
+									"referenceName": "ExternalTableScript_Hive2_DS",
 									"type": "DatasetReference",
 									"parameters": {
 										"path": {
