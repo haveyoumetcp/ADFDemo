@@ -1,5 +1,5 @@
 {
-	"name": "ExecuteHiveExternalTableScripts_new",
+	"name": "ExecuteHiveExternalTableScripts",
 	"properties": {
 		"activities": [
 			{
