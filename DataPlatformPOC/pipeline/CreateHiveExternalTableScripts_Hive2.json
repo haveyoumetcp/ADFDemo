@@ -101,7 +101,7 @@
 												"type": "Expression"
 											}
 										},
-										"TableName": {
+										"ObjectName": {
 											"type": "String",
 											"value": {
 												"value": "@item().ObjectName",
