@@ -162,7 +162,8 @@
 		],
 		"parameters": {
 			"DatabaseName": {
-				"type": "String"
+				"type": "String",
+				"defaultValue": "avidpaytransaction"
 			},
 			"SchemaName": {
 				"type": "String"
