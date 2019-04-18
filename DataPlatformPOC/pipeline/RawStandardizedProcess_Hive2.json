@@ -31,7 +31,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Hive_DS",
+						"referenceName": "Hive2_DS",
 						"type": "DatasetReference",
 						"parameters": {
 							"ObjectName": {
@@ -88,7 +88,7 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "avidxhdisparkcpollocksandbox",
+					"referenceName": "avidxhdisparkcpollocksandbox2",
 					"type": "LinkedServiceReference"
 				}
 			},
@@ -243,7 +243,7 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "avidxhdisparkcpollocksandbox",
+					"referenceName": "avidxhdisparkcpollocksandbox2",
 					"type": "LinkedServiceReference"
 				}
 			},
