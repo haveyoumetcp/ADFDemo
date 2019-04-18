@@ -121,6 +121,13 @@
 												"value": "@pipeline().parameters.StorageAccountLocation",
 												"type": "Expression"
 											}
+										},
+										"HiveTableName": {
+											"type": "String",
+											"value": {
+												"value": "@{pipeline().parameters.DatabaseName}_@{pipeline().parameters.SchemaName}_@{pipeline().parameters.ObjectName}",
+												"type": "Expression"
+											}
 										}
 									}
 								},
