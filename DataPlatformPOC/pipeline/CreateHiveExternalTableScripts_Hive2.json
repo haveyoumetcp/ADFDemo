@@ -85,7 +85,7 @@
 							"typeProperties": {
 								"source": {
 									"type": "SqlSource",
-									"sqlReaderStoredProcedureName": "[dbo].[uspGetHiveExternalTableSchemaSQLServer_new]",
+									"sqlReaderStoredProcedureName": "[dbo].[uspGetHiveExternalTableSchemaSQLServer]",
 									"storedProcedureParameters": {
 										"DatabaseName": {
 											"type": "String",
