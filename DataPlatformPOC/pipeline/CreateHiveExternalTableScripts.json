@@ -165,7 +165,7 @@
 			},
 			"StorageAccountLocation": {
 				"type": "String",
-				"defaultValue": "abfss://rawzone@avidsadlv2cpollock.dfs.core.windows.net/"
+				"defaultValue": "abfss://raw@avidsadlv2cpollock.dfs.core.windows.net/"
 			},
 			"StoredAsType": {
 				"type": "String",
