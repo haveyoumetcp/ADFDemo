@@ -1,0 +1,122 @@
+{
+	"name": "ExecuteHiveExternalTableScripts_Hive2",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetObjectList",
+				"type": "Lookup",
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 5,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[uspGetMetadataObjectsSQLServer]",
+						"storedProcedureParameters": {
+							"DatabaseName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.DatabaseName",
+									"type": "Expression"
+								}
+							},
+							"IsReturnAllIndividualObjects": {
+								"type": "Boolean",
+								"value": {
+									"value": "@bool(pipeline().parameters.IsCreateInvididualObjectScripts)",
+									"type": "Expression"
+								}
+							},
+							"ObjectName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.ObjectName",
+									"type": "Expression"
+								}
+							},
+							"SchemaName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.SchemaName",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"dataset": {
+						"referenceName": "ETLConfigDB_DS",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FE_ExecuteHiveExternalTableScripts",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetObjectList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetObjectList').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 50,
+					"activities": [
+						{
+							"name": "ExecuteHiveExternalTableScript",
+							"type": "HDInsightHive",
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"typeProperties": {
+								"scriptPath": {
+									"value": "@toLower(CONCAT('hiveexternaltablescripts/',item().DatabaseName,if(empty(item().SchemaName),'.hql',CONCAT('/',item().SchemaName,if(empty(item().ObjectName),'.hql',CONCAT('/',item().ObjectName,'.hql'))))))",
+									"type": "Expression"
+								},
+								"getDebugInfo": "Failure",
+								"scriptLinkedService": {
+									"referenceName": "avidxsacpollockhdinsight",
+									"type": "LinkedServiceReference"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "avidxhdisparkcpollocksandbox2",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"DatabaseName": {
+				"type": "String"
+			},
+			"SchemaName": {
+				"type": "String"
+			},
+			"ObjectName": {
+				"type": "String"
+			},
+			"IsCreateInvididualObjectScripts": {
+				"type": "Bool",
+				"defaultValue": false
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
