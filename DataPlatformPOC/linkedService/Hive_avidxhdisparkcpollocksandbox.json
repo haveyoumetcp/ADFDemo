@@ -4,7 +4,7 @@
 	"properties": {
 		"type": "Hive",
 		"typeProperties": {
-			"host": "avidxhdisparkcpollocksandbox.azurehdinsight.net",
+			"host": "avidxhdisparkcpollocksandbox2.azurehdinsight.net",
 			"port": 443,
 			"serverType": "HiveServer2",
 			"thriftTransportProtocol": null,
@@ -13,7 +13,7 @@
 			"useNativeQuery": false,
 			"username": "admin",
 			"enableSsl": false,
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFWSURYLVNBTkRCT1gtQ1BPTExPQ0tfZTUxOWNkNzYtZjk2ZC00OWYzLTg5YWItZmE1NGRjZWJjZWRiIg0KfQ=="
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFWSURYLVNBTkRCT1gtQ1BPTExPQ0tfYmMwZThjOWQtNWMwYi00NmU3LTlkODYtODJhOTBiNTk1ZGM5Ig0KfQ=="
 		}
 	}
 }
