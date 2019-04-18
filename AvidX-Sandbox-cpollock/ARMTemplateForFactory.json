@@ -5853,7 +5853,7 @@
 					},
 					"StorageAccountLocation": {
 						"type": "String",
-						"defaultValue": "adl://avidxdlssandboxcpollock.azuredatalakestore.net/rawstandardized"
+						"defaultValue": "abfss://rawstandardized@avidxdlssandboxcpollock2.dfs.core.windows.net/"
 					}
 				},
 				"variables": {
