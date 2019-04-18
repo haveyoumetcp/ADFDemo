@@ -1,0 +1,32 @@
+{
+	"name": "ExternalTableScript_Hive2_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "avidxsacpollockhdinsight",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "String"
+			}
+		},
+		"type": "AzureBlob",
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": "",
+				"rowDelimiter": "",
+				"nullValue": "\\N",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": false
+			},
+			"fileName": {
+				"value": "@dataset().path",
+				"type": "Expression"
+			},
+			"folderPath": "hiveexternaltablescripts"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
