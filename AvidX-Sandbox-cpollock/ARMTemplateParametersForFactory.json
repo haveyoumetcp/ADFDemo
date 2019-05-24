@@ -171,7 +171,7 @@
 			"value": "AvidX-Dv-TsResources-Edw-Poc-RG"
 		},
 		"ADLS_Gen2_properties_typeProperties_url": {
-			"value": "https://avidsadlv2cpollock.dfs.core.windows.net"
+			"value": "https://avidxsadvdatalake01.dfs.core.windows.net"
 		},
 		"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
 			"value": "https://avidxdlssandboxcpollock.azuredatalakestore.net/webhdfs/v1"

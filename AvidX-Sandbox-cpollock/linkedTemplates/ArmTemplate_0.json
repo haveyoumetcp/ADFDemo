@@ -101,7 +101,7 @@
 		},
 		"ADLS_Gen2_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://avidsadlv2cpollock.dfs.core.windows.net"
+			"defaultValue": "https://avidxsadvdatalake01.dfs.core.windows.net"
 		},
 		"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",

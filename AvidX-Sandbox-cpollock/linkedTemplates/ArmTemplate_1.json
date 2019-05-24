@@ -410,7 +410,7 @@
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().ObjectName}]')]",
+						"value": "[[@{dataset().SchemaName}].[@{dataset().ObjectName}]",
 						"type": "Expression"
 					}
 				}
@@ -454,7 +454,7 @@
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().ObjectName}]')]",
+						"value": "[[@{dataset().SchemaName}].[@{dataset().ObjectName}]",
 						"type": "Expression"
 					}
 				}
@@ -684,7 +684,7 @@
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().TableName}]')]",
+						"value": "[[@{dataset().SchemaName}].[@{dataset().TableName}]",
 						"type": "Expression"
 					}
 				}

@@ -229,7 +229,7 @@
 		},
 		"ADLS_Gen2_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://avidsadlv2cpollock.dfs.core.windows.net"
+			"defaultValue": "https://avidxsadvdatalake01.dfs.core.windows.net"
 		},
 		"AzureDataLakeStore1_properties_typeProperties_dataLakeStoreUri": {
 			"type": "string",
@@ -805,7 +805,10 @@
 								"referenceName": "ADLS_Gen2",
 								"type": "DatasetReference",
 								"parameters": {
-									"Directory": "rawzone-orc"
+									"Directory": {
+										"value": "@pipeline().parameters.SourceDirectory",
+										"type": "Expression"
+									}
 								}
 							}
 						],
@@ -814,12 +817,25 @@
 								"referenceName": "ADLS_Gen2",
 								"type": "DatasetReference",
 								"parameters": {
-									"Directory": "rawzone"
+									"Directory": {
+										"value": "@pipeline().parameters.TargetDirectory",
+										"type": "Expression"
+									}
 								}
 							}
 						]
 					}
 				],
+				"parameters": {
+					"SourceDirectory": {
+						"type": "string",
+						"defaultValue": "raw"
+					},
+					"TargetDirectory": {
+						"type": "string",
+						"defaultValue": "dev/raw"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -847,7 +863,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetMetadataObjectsSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetMetadataObjectsSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -921,7 +937,7 @@
 									"typeProperties": {
 										"source": {
 											"type": "SqlSource",
-											"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer_new]')]",
+											"sqlReaderStoredProcedureName": "[[dbo].[uspGetHiveExternalTableSchemaSQLServer_new]",
 											"storedProcedureParameters": {
 												"DatabaseName": {
 													"type": "String",
@@ -1041,7 +1057,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetMetadataObjectsSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetMetadataObjectsSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -1115,7 +1131,7 @@
 									"typeProperties": {
 										"source": {
 											"type": "SqlSource",
-											"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer]')]",
+											"sqlReaderStoredProcedureName": "[[dbo].[uspGetHiveExternalTableSchemaSQLServer]",
 											"storedProcedureParameters": {
 												"DatabaseName": {
 													"type": "String",
@@ -1283,7 +1299,7 @@
 									"typeProperties": {
 										"source": {
 											"type": "SqlSource",
-											"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer]')]",
+											"sqlReaderStoredProcedureName": "[[dbo].[uspGetHiveExternalTableSchemaSQLServer]",
 											"storedProcedureParameters": {
 												"DatabaseName": {
 													"type": "String",
@@ -1446,7 +1462,7 @@
 									"typeProperties": {
 										"source": {
 											"type": "SqlSource",
-											"sqlReaderStoredProcedureName": "[concat('[', 'dbo].uspGetHiveSnapshotScriptSQLServer')]",
+											"sqlReaderStoredProcedureName": "[dbo].uspGetHiveSnapshotScriptSQLServer",
 											"storedProcedureParameters": {
 												"DatabaseName": {
 													"type": "String",
@@ -1713,7 +1729,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetMetadataObjectsSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetMetadataObjectsSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -1848,7 +1864,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetMetadataObjectsSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetMetadataObjectsSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -2529,7 +2545,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'meta].[uspCreateMetadataLoad]')]"
+								"sqlReaderStoredProcedureName": "[[meta].[uspCreateMetadataLoad]"
 							},
 							"dataset": {
 								"referenceName": "MetadataProcess_DS",
@@ -2561,7 +2577,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"storedProcedureName": "[concat('[', 'meta].[uspProcessMetadataLoad]')]",
+							"storedProcedureName": "[[meta].[uspProcessMetadataLoad]",
 							"storedProcedureParameters": {
 								"MetadataLoadID": {
 									"value": {
@@ -2750,7 +2766,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'meta].[uspGetMetadataSources]')]",
+								"sqlReaderStoredProcedureName": "[[meta].[uspGetMetadataSources]",
 								"storedProcedureParameters": {
 									"SourceType": {
 										"type": "String",
@@ -2789,7 +2805,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"storedProcedureName": "[concat('[', 'meta].[uspTruncateMetadataLoadStageTables]')]"
+							"storedProcedureName": "[[meta].[uspTruncateMetadataLoadStageTables]"
 						},
 						"linkedServiceName": {
 							"referenceName": "MetadataProcess",
@@ -3084,7 +3100,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetExternalTableSchemaSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetExternalTableSchemaSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -3134,7 +3150,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetExternalTableSchemaSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetExternalTableSchemaSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -3460,7 +3476,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetHiveExternalTableSchemaSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -3608,7 +3624,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveSnapshotViewScriptSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetHiveSnapshotViewScriptSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -3919,7 +3935,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetHiveExternalTableSchemaSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -4067,7 +4083,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveSnapshotViewScriptSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetHiveSnapshotViewScriptSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -4376,7 +4392,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveExternalTableSchemaSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetHiveExternalTableSchemaSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -4524,7 +4540,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlSource",
-								"sqlReaderStoredProcedureName": "[concat('[', 'dbo].[uspGetHiveSnapshotViewScriptSQLServer]')]",
+								"sqlReaderStoredProcedureName": "[[dbo].[uspGetHiveSnapshotViewScriptSQLServer]",
 								"storedProcedureParameters": {
 									"DatabaseName": {
 										"type": "String",
@@ -5185,7 +5201,7 @@
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().ObjectName}]')]",
+						"value": "[[@{dataset().SchemaName}].[@{dataset().ObjectName}]",
 						"type": "Expression"
 					}
 				}
@@ -5231,7 +5247,7 @@
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().ObjectName}]')]",
+						"value": "[[@{dataset().SchemaName}].[@{dataset().ObjectName}]",
 						"type": "Expression"
 					}
 				}
@@ -5477,7 +5493,7 @@
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().TableName}]')]",
+						"value": "[[@{dataset().SchemaName}].[@{dataset().TableName}]",
 						"type": "Expression"
 					}
 				}
@@ -5539,7 +5555,7 @@
 				"type": "AzureSqlTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().TableName}]')]",
+						"value": "[[@{dataset().SchemaName}].[@{dataset().TableName}]",
 						"type": "Expression"
 					}
 				}
@@ -5605,7 +5621,7 @@
 				"type": "SqlServerTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().ObjectName}]')]",
+						"value": "[[@{dataset().SchemaName}].[@{dataset().ObjectName}]",
 						"type": "Expression"
 					}
 				}
@@ -5644,7 +5660,7 @@
 				"type": "SqlServerTable",
 				"typeProperties": {
 					"tableName": {
-						"value": "[concat('[', '@{dataset().SchemaName}].[@{dataset().ObjectName}]')]",
+						"value": "[[@{dataset().SchemaName}].[@{dataset().ObjectName}]",
 						"type": "Expression"
 					}
 				}
@@ -5801,7 +5817,7 @@
 					}
 				],
 				"typeProperties": {
-					"tableName": "[concat('[', 'integrations_static].[tBatchExportStatus]')]"
+					"tableName": "[[integrations_static].[tBatchExportStatus]"
 				}
 			},
 			"dependsOn": [
