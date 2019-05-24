@@ -28,7 +28,10 @@
 						"referenceName": "ADLS_Gen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"Directory": "rawzone-orc"
+							"Directory": {
+								"value": "@pipeline().parameters.SourceDirectory",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -37,12 +40,25 @@
 						"referenceName": "ADLS_Gen2",
 						"type": "DatasetReference",
 						"parameters": {
-							"Directory": "rawzone"
+							"Directory": {
+								"value": "@pipeline().parameters.TargetDirectory",
+								"type": "Expression"
+							}
 						}
 					}
 				]
 			}
-		]
+		],
+		"parameters": {
+			"SourceDirectory": {
+				"type": "string",
+				"defaultValue": "raw"
+			},
+			"TargetDirectory": {
+				"type": "string",
+				"defaultValue": "dev/raw"
+			}
+		}
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }
