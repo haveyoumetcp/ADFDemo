@@ -893,8 +893,7 @@
 							"sink": {
 								"type": "AzureBlobFSSink"
 							},
-							"enableStaging": false,
-							"dataIntegrationUnits": 0
+							"enableStaging": false
 						},
 						"inputs": [
 							{
