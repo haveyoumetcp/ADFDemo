@@ -124,7 +124,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[uspGetHiveExternalTableSchemaSQLServer]",
+						"sqlReaderStoredProcedureName": "[meta].[uspGetHiveExternalTableSchemaSQLServer]",
 						"storedProcedureParameters": {
 							"DatabaseName": {
 								"type": "String",
@@ -175,8 +175,12 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "ETLConfigDB_DS",
-						"type": "DatasetReference"
+						"referenceName": "MetadataProcess_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"SchemaName": " ",
+							"TableName": " "
+						}
 					}
 				],
 				"outputs": [
@@ -268,7 +272,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlSource",
-						"sqlReaderStoredProcedureName": "[dbo].[uspGetHiveSnapshotViewScriptSQLServer]",
+						"sqlReaderStoredProcedureName": "[meta].[uspGetHiveSnapshotViewScriptSQLServer]",
 						"storedProcedureParameters": {
 							"DatabaseName": {
 								"type": "String",
@@ -309,8 +313,12 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "ETLConfigDB_DS",
-						"type": "DatasetReference"
+						"referenceName": "MetadataProcess_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"SchemaName": " ",
+							"TableName": " "
+						}
 					}
 				],
 				"outputs": [
