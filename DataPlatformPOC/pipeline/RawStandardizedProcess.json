@@ -21,26 +21,11 @@
 					"secureInput": false
 				},
 				"typeProperties": {
-					"source": {
-						"type": "HiveSource"
-					},
 					"sink": {
 						"type": "AzureDataLakeStoreSink"
 					},
 					"enableStaging": false
 				},
-				"inputs": [
-					{
-						"referenceName": "Hive_DS",
-						"type": "DatasetReference",
-						"parameters": {
-							"ObjectName": {
-								"value": "@variables('HiveSnapshotViewName')",
-								"type": "Expression"
-							}
-						}
-					}
-				],
 				"outputs": [
 					{
 						"referenceName": "ADLS_Gen1_orc",
@@ -88,7 +73,7 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "avidxhdisparkcpollocksandbox",
+					"referenceName": "AvidXSbxDataPlatformETLHDI",
 					"type": "LinkedServiceReference"
 				}
 			},
@@ -247,7 +232,7 @@
 					}
 				},
 				"linkedServiceName": {
-					"referenceName": "avidxhdisparkcpollocksandbox",
+					"referenceName": "AvidXSbxDataPlatformETLHDI",
 					"type": "LinkedServiceReference"
 				}
 			},
