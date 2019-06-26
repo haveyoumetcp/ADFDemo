@@ -62,7 +62,7 @@
 							"typeProperties": {
 								"source": {
 									"type": "SqlSource",
-									"sqlReaderStoredProcedureName": "[dbo].uspGetHiveSnapshotScriptSQLServer",
+									"sqlReaderStoredProcedureName": "[meta].uspGetHiveSnapshotScriptSQLServer",
 									"storedProcedureParameters": {
 										"DatabaseName": {
 											"type": "String",
