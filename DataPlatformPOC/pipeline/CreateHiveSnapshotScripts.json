@@ -16,13 +16,17 @@
 					"source": {
 						"type": "SqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT DISTINCT ISNULL(FriendlyDatabaseName, DatabaseName) AS DatabaseName, SchemaName, ObjectName\nFROM [dbo].[vwMetadataSQLServer]\nWHERE IsLatestLoad = 1\n\tAND (ISNULL(FriendlyDatabaseName, DatabaseName) = '@{pipeline().parameters.DatabaseName}' OR NULLIF(TRIM('@{pipeline().parameters.DatabaseName}'),'') IS NULL)\n\tAND (SchemaName = '@{pipeline().parameters.SchemaName}' OR NULLIF(TRIM('@{pipeline().parameters.SchemaName}'),'') IS NULL)\n\tAND (ObjectName = '@{pipeline().parameters.ObjectName}' OR NULLIF(TRIM('@{pipeline().parameters.ObjectName}'),'') IS NULL)",
+							"value": "SELECT DISTINCT ISNULL(FriendlyDatabaseName, DatabaseName) AS DatabaseName, SchemaName, ObjectName\nFROM [meta].[vwMetadataSQLServer]\nWHERE IsLatestLoad = 1\n\tAND (ISNULL(FriendlyDatabaseName, DatabaseName) = '@{pipeline().parameters.DatabaseName}' OR NULLIF(TRIM('@{pipeline().parameters.DatabaseName}'),'') IS NULL)\n\tAND (SchemaName = '@{pipeline().parameters.SchemaName}' OR NULLIF(TRIM('@{pipeline().parameters.SchemaName}'),'') IS NULL)\n\tAND (ObjectName = '@{pipeline().parameters.ObjectName}' OR NULLIF(TRIM('@{pipeline().parameters.ObjectName}'),'') IS NULL)",
 							"type": "Expression"
 						}
 					},
 					"dataset": {
-						"referenceName": "ETLConfigDB_DS",
-						"type": "DatasetReference"
+						"referenceName": "MetadataProcess_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"SchemaName": " ",
+							"TableName": " "
+						}
 					},
 					"firstRowOnly": false
 				}
@@ -91,8 +95,12 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "ETLConfigDB_DS",
-									"type": "DatasetReference"
+									"referenceName": "MetadataProcess_DS",
+									"type": "DatasetReference",
+									"parameters": {
+										"SchemaName": " ",
+										"TableName": " "
+									}
 								}
 							],
 							"outputs": [
