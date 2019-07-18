@@ -1,0 +1,36 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "AvidX-Sandbox-cpollock"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataExplorer1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDataExplorer",
+				"typeProperties": {
+					"endpoint": "https://cpollockdataexplorer.eastus.kusto.windows.net",
+					"tenant": "55d96f5e-2b75-4762-ae08-11de584d8e83",
+					"servicePrincipalId": "a0e96790-b305-4a43-bd2e-f552d46c025c",
+					"servicePrincipalKey": {
+						"type": "SecureString",
+						"value": "**********"
+					},
+					"database": "datalake-raw"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
