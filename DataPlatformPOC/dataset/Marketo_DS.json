@@ -1,0 +1,15 @@
+{
+	"name": "Marketo_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Marketo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "MarketoObject",
+		"schema": [],
+		"typeProperties": {
+			"tableName": "\"MARKETO\".\"Leads\""
+		}
+	}
+}
