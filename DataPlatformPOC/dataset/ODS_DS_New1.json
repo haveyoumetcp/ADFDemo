@@ -1,0 +1,29 @@
+{
+	"name": "ODS_DS_New1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ODS",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SchemaName": {
+				"type": "String",
+				"defaultValue": "integrations_static"
+			},
+			"ObjectName": {
+				"type": "String",
+				"defaultValue": "tBatchExportStatus"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"tableName": {
+				"value": "@{dataset().SchemaName}.@{dataset().ObjectName}",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
