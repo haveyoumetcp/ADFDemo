@@ -1,0 +1,15 @@
+{
+	"name": "SFOrg2_Lead_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SalesforceOrg2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SalesforceObject",
+		"schema": [],
+		"typeProperties": {
+			"objectApiName": "Lead"
+		}
+	}
+}
