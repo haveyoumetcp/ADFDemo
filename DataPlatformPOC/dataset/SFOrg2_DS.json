@@ -1,10 +1,11 @@
 {
-	"name": "SalesforceObject1",
+	"name": "SFOrg2_DS",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "SalesforceOrg1",
+			"referenceName": "SalesforceOrg2",
 			"type": "LinkedServiceReference"
 		},
+		"annotations": [],
 		"type": "SalesforceObject"
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
